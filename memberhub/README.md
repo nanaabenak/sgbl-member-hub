@@ -415,7 +415,7 @@ On later code deployments, re-run `bash deploy/deploy.sh <domain>` from the `mem
 Some AWS training labs give you no key pair and no SSH. In that case the instance must pull everything itself at launch.
 
 1. Create a **public** GitHub repository from the workspace root so it contains both `AWSBuildersBadge---UMaT/` and `memberhub/` as siblings. The root `.gitignore` excludes `.env`, virtual environments, backups, `__pycache__` and the original project's nested `.git` history.
-2. Open `deploy/user_data.sh` and replace `REPO_URL` with your public repo URL.
+2. Open `deploy/user_data.sh` — `REPO_URL` already points at `nanaabenak/sgbl-member-hub`. Change it only if you fork the repo.
 3. Paste the whole file into **Task 1 → User Data** when launching the instance.
 4. In **Task 3**, add an inbound rule for **port 80** from `0.0.0.0/0` (or your lab's required CIDR).
 5. After boot, open the EC2 console → select the instance → **Monitor and troubleshoot → Get system log**. Look for lines beginning `MEMBERHUB_`. They contain the URL and the generated administrator password.

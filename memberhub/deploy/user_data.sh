@@ -3,7 +3,7 @@
 # Replace REPO_URL, then paste this entire file into User Data at launch.
 set -euo pipefail
 
-REPO_URL="https://github.com/YOUR-ORG/YOUR-REPO.git"
+REPO_URL="https://github.com/nanaabenak/sgbl-member-hub.git"
 APP_ROOT=/opt/memberhub-src
 VENV=/opt/memberhub-venv
 DB_NAME=sgbl_member_hub
