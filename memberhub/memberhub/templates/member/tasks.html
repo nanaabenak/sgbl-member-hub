@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% from "_macros.html" import chip %}
+{% block title %}My tasks{% endblock %}
+{% block content %}
+<div class="panel green">
+  <div class="pixel-rule"></div>
+  <h1>My tasks</h1>
+  <p style="margin:0;opacity:.85">Build something, record your work, submit evidence for review.</p>
+</div>
+<div class="panel">
+  <div class="panel-head"><h2>Published tasks</h2><small>{{ tasks|length }} assigned to you</small></div>
+  {% if tasks %}
+  <div class="table-wrap"><table>
+    <thead><tr><th>Task</th><th>Deadline</th><th>Status</th><th>Submitted</th><th></th></tr></thead>
+    <tbody>
+      {% for t in tasks %}
+      <tr>
+        <td><b>{{ t.title }}</b><span class="sub">{{ t.description[:110] }}</span></td>
+        <td>{{ t.due_at|dt('%d %b %Y, %H:%M') if t.due_at else 'no deadline' }}</td>
+        <td>{{ chip(t.submission_status) }}</td>
+        <td>{{ t.submitted_at|dt if t.submitted_at else '—' }}</td>
+        <td><a class="btn sm primary" href="{{ url_for('member.task_detail', task_id=t.id) }}">open ▸</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table></div>
+  {% else %}<div class="empty">No tasks have been published for you yet.</div>{% endif %}
+</div>
+{% endblock %}
+{% block anon_content %}{% endblock %}

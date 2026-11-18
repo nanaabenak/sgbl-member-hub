@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% from "_macros.html" import chip %}
+{% block title %}{{ member.full_name }}{% endblock %}
+{% block content %}
+<div class="panel green">
+  <div class="pixel-rule"></div>
+  <h1 style="margin-bottom:4px">{{ member.full_name }}</h1>
+  <p style="margin:0;opacity:.85">@{{ member.username }} · {{ member.email }} · joined {{ member.joined_at|dt('%d %b %Y') }}</p>
+  <div style="margin-top:10px">{{ chip(member.membership_status) }} {{ chip(member.role_name) }} {{ chip('active' if member.is_active else 'inactive') }}</div>
+</div>
+
+<div class="stats compact">
+  <div class="stat"><b>{{ attendance|length }}</b><span>attendance records</span></div>
+  <div class="stat"><b>{{ rsvps|length }}</b><span>RSVP records</span></div>
+  <div class="stat"><b>{{ clicks }}</b><span>Meetup clicks</span></div>
+  <div class="stat"><b>{{ tasks|length }}</b><span>task submissions</span></div>
+  <div class="stat"><b>{{ verifications|length }}</b><span>verification events</span></div>
+</div>
+
+<div class="panel">
+  <div class="panel-head"><h2>Edit membership</h2><small>changes are recorded in the audit log</small></div>
+  <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="action" value="profile">
+    <div class="form-grid">
+      <label class="field">Full name <input name="full_name" value="{{ member.full_name }}" required maxlength="120"></label>
+      <label class="field">Student ID <input name="student_id" value="{{ member.student_id }}" maxlength="40"></label>
+      <label class="field">Phone <input name="phone" value="{{ member.phone }}" maxlength="40"></label>
+      <label class="field">Location <input name="location" value="{{ member.location }}" maxlength="80"></label>
+      <label class="field">Programme <input name="program" value="{{ member.program }}" maxlength="120"></label>
+      <label class="field">GitHub username <input name="github_username" value="{{ member.github_username }}" maxlength="40"></label>
+      <label class="field">Membership status
+        <select name="membership_status">{% for s in ['pending','active','inactive','suspended'] %}<option value="{{ s }}" {{ 'selected' if member.membership_status == s }}>{{ s }}</option>{% endfor %}</select>
+      </label>
+      <label class="field">Role
+        <select name="role"><option value="member" {{ 'selected' if member.role_name == 'member' }}>member</option><option value="admin" {{ 'selected' if member.role_name == 'admin' }}>admin</option></select>
+      </label>
+      <label class="field full">Bio <textarea name="bio" maxlength="600">{{ member.bio }}</textarea></label>
+      <label class="check full"><input type="checkbox" name="is_active" value="1" {{ 'checked' if member.is_active }}> account can sign in</label>
+    </div>
+    <div class="form-actions"><button class="primary" type="submit">save changes</button></div>
+  </form>
+  <hr>
+  <form method="post" data-confirm="Reset this member's password and sign out all their sessions?">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="action" value="password">
+    <label class="field" style="max-width:320px">New temporary password <input type="password" name="password" required minlength="10"></label>
+    <div class="form-actions"><button class="danger" type="submit">reset password</button></div>
+  </form>
+</div>
+
+<div class="g2 grid">
+  <div class="panel">
+    <h2>Attendance history</h2>
+    {% if attendance %}<div class="table-wrap"><table><thead><tr><th>Session</th><th>Status</th><th>Recorded</th></tr></thead><tbody>
+      {% for a in attendance %}<tr><td>{{ a.title }}</td><td>{{ chip(a.status) }}</td><td>{{ a.created_at|dt('%d %b') }}</td></tr>{% endfor %}
+    </tbody></table></div>{% else %}<div class="empty">No attendance records.</div>{% endif %}
+  </div>
+  <div class="panel">
+    <h2>RSVP history</h2>
+    {% if rsvps %}<div class="table-wrap"><table><thead><tr><th>Session</th><th>Status</th><th>Source</th></tr></thead><tbody>
+      {% for r in rsvps %}<tr><td>{{ r.title }}</td><td>{{ chip(r.status) }}</td><td>{{ r.source }}</td></tr>{% endfor %}
+    </tbody></table></div>{% else %}<div class="empty">No RSVP records.</div>{% endif %}
+  </div>
+</div>
+
+<div class="panel">
+  <h2>Task submissions</h2>
+  {% if tasks %}<div class="table-wrap"><table><thead><tr><th>Task</th><th>Status</th><th>Submitted</th><th>Reviewed</th></tr></thead><tbody>
+    {% for t in tasks %}<tr><td>{{ t.title }}</td><td>{{ chip(t.status) }}</td><td>{{ t.submitted_at|dt if t.submitted_at else '—' }}</td><td>{{ t.reviewed_at|dt if t.reviewed_at else '—' }}</td></tr>{% endfor %}
+  </tbody></table></div>{% else %}<div class="empty">No task submissions.</div>{% endif %}
+</div>
+
+<div class="panel">
+  <h2>Verification events</h2>
+  {% if verifications %}<div class="table-wrap"><table><thead><tr><th>Type</th><th>Status</th><th>When</th><th>Reviewer</th><th>Notes</th></tr></thead><tbody>
+    {% for v in verifications %}<tr><td>{{ v.subject_type|replace('_',' ') }}</td><td>{{ chip(v.status) }}</td><td>{{ v.created_at|dt }}</td><td>{{ v.reviewer or '—' }}</td><td>{{ v.notes or '—' }}</td></tr>{% endfor %}
+  </tbody></table></div>{% else %}<div class="empty">No verification events.</div>{% endif %}
+</div>
+{% endblock %}
+{% block anon_content %}{% endblock %}

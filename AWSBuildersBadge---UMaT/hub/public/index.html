@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hunt Hub · BuildersBadge</title>
+<style>
+  :root { --g: #22c55e; --gd: #15803d; --bg: #0b1210; --card: #101b16; --line: #1f3529; --tx: #d7f2e3; --mut: #7da58e; }
+  * { box-sizing: border-box; margin: 0 }
+  body { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: var(--bg); color: var(--tx); min-height: 100vh; padding: 18px }
+  .wrap { max-width: 560px; margin: 0 auto; display: grid; gap: 14px }
+  header h1 { font-size: 20px; letter-spacing: 1px; color: var(--g) }
+  header p { color: var(--mut); font-size: 12px; margin-top: 4px }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px }
+  .card h2 { font-size: 13px; color: var(--mut); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px }
+  input { width: 100%; padding: 11px 12px; border-radius: 8px; border: 1px solid var(--line); background: #0d1611; color: var(--tx); font: inherit }
+  button { font: inherit; cursor: pointer; border-radius: 8px; border: 1px solid var(--line); background: #14301f; color: var(--tx); padding: 11px 14px }
+  button.pri { background: var(--gd); border-color: var(--gd); color: #fff }
+  button:disabled { opacity: .45; cursor: not-allowed }
+  .row { display: flex; gap: 8px; margin-top: 10px }
+  .slots { display: flex; gap: 8px }
+  .hslot { flex: 1; border: 1px solid var(--line); border-radius: 10px; padding: 10px 6px; text-align: center; color: var(--mut); font-size: 11px }
+  .hslot.g { color: var(--g); border-color: var(--gd) }
+  .hslot svg { width: 26px; height: 26px; display: block; margin: 0 auto 4px }
+  #status b { color: var(--g) }
+  .cam { display: none }
+  .cam.open { display: block }
+  video { width: 100%; border-radius: 10px; background: #000; display: block }
+  .quiz { display: none }
+  .quiz.open { display: block }
+  .bar { height: 6px; background: #0d1611; border-radius: 3px; overflow: hidden; margin: 10px 0 }
+  .bar i { display: block; height: 100%; background: var(--g); transition: width .1s linear }
+  .bar.low i { background: #ef4444 }
+  #qq { font-size: 16px; line-height: 1.5 }
+  #qopts { display: grid; gap: 8px; margin-top: 12px }
+  #qopts button { text-align: left; padding: 12px }
+  #qopts .ok { background: #14532d; border-color: var(--g) }
+  #qopts .bad { background: #450a0a; border-color: #ef4444 }
+  #res { margin-top: 10px; font-size: 14px; min-height: 20px }
+  .mut { color: var(--mut) }
+  .warn { color: #f59e0b; font-size: 12px }
+  .feed { font-size: 12px; color: var(--mut); line-height: 1.7; max-height: 120px; overflow: auto }
+  .feed b { color: var(--tx) }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>AWS STUDENT BUILDERS · HUNT HUB</h1>
+    <p id="apinote" class="mut"></p>
+  </header>
+
+  <section class="card" id="idcard">
+    <h2>Who are you?</h2>
+    <div class="row" style="margin:0">
+      <input id="iuser" placeholder="your username (e.g. hell0beta)" autocapitalize="off" autocomplete="off">
+    </div>
+    <div class="row">
+      <input id="iname" placeholder="your name (optional)">
+      <button class="pri" id="ibtn">Enter</button>
+    </div>
+  </section>
+
+  <section class="card" id="status" hidden>
+    <h2>Hunt status · <span id="un"></span></h2>
+    <div class="slots" id="hslots"></div>
+    <p id="hst" style="margin-top:10px" class="mut"></p>
+    <div class="row">
+      <button id="hstart">Start hunt</button>
+      <button id="hstop">Stop hunt</button>
+    </div>
+    <p id="feed" class="feed" style="margin-top:10px"></p>
+  </section>
+
+  <section class="card" id="scancard" hidden>
+    <h2>Connect with a builder</h2>
+    <button class="pri" id="scanbtn" style="width:100%">📷 Scan a builder card</button>
+    <div class="cam" id="camwrap" style="margin-top:10px">
+      <video id="cam" playsinline muted autoplay></video>
+      <p class="mut" style="font-size:12px;margin-top:6px">Point the camera at the QR code on a builder card</p>
+    </div>
+  </section>
+
+  <section class="card quiz" id="quiz">
+    <h2><span id="qcat"></span> · connect question</h2>
+    <p>Trinket on the line with <b id="qwho"></b></p>
+    <div class="bar" id="qbar"><i id="qfill"></i></div>
+    <p id="qq"></p>
+    <div id="qopts"></div>
+    <p id="res"></p>
+  </section>
+
+  <p id="warn" class="warn" hidden></p>
+</div>
+<script src="jsqr.min.js"></script>
+<script>
+const $ = s => document.querySelector(s);
+const TRK = [
+  { id: 'cloud', name: 'Cloud Node', svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18h10a4 4 0 0 0 0-8 5 5 0 0 0-9.8-1.2A4.5 4.5 0 0 0 7 18z"/></svg>' },
+  { id: 'chip', name: 'AI Core', svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="7" y="7" width="10" height="10"/><rect x="10.5" y="10.5" width="3" height="3"/><path d="M9 7V3M12 7V3M15 7V3M9 21v-4M12 21v-4M15 21v-4M7 9H3M7 12H3M7 15H3M21 9h-4M21 12h-4M21 15h-4"/></svg>' },
+  { id: 'srv', name: 'Backend Rig', svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="4" y="4" width="16" height="5"/><rect x="4" y="10" width="16" height="5"/><rect x="4" y="16" width="16" height="4"/><path d="M7 6.5h.01M7 12.5h.01M7 18h.01"/></svg>' },
+  { id: 'db', name: 'Data Vault', svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><ellipse cx="12" cy="5.5" rx="7" ry="2.5"/><path d="M5 5.5v13c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-13M5 12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5"/></svg>' },
+  { id: 'branch', name: 'Branch Token', svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>' },
+  { id: 'zap', name: 'Bolt Charge', svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>' },
+  { id: 'shield', name: 'Aegis Shield', svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>' }
+];
+const art = new URLSearchParams(location.search).get('api');
+let API = art || localStorage.getItem('bbHub.api') || '';
+API = API.replace(/\/+$/, '');
+if (API) localStorage.setItem('bbHub.api', API);
+const wantTrinket = (new URLSearchParams(location.search).get('id') || '').trim();
+$('#apinote').textContent = API ? 'API: ' + API : 'API: same origin' + (wantTrinket ? ' · hunting ' + wantTrinket : '');
+
+const j = (path, opts) => fetch(API + path, opts).then(r => r.json());
+const post = (path, body) => j(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+let tok = localStorage.getItem('bbHub.tok') || '';
+let me = null, hunt = null, stream = null, raf = 0, tickI = 0, quiz = null, since = 0;
+const feedL = [];
+
+function show(id, on) { $(id).hidden = !on }
+function renderHunt() {
+  const targets = wantTrinket ? [wantTrinket] : hunt.targets;
+  $('#hslots').innerHTML = targets.map(id => {
+    const t = TRK.find(x => x.id == id), done = hunt.won.includes(id);
+    return `<div class="hslot ${done ? 'g' : ''}">${t.svg}${done ? '✔ ' : ''}${t.name}</div>`;
+  }).join('');
+  const k = wantTrinket ? (hunt.won.includes(wantTrinket) ? 1 : 0) : hunt.won.length;
+  $('#hst').innerHTML = wantTrinket ? (k ? '<b>' + (TRK.find(t => t.id == wantTrinket).name) + ' earned</b>' : 'Searching for ' + (TRK.find(t => t.id == wantTrinket).name) + ' — scan a card to earn it') : (hunt.on ? (k == 3 ? '<b>Hunt complete!</b>' : `<b>${k}/3</b> trinkets — scan a card to earn the next one`) : 'Hunt is off — scanning just connects builders');
+  $('#hstart').disabled = hunt.on; $('#hstop').disabled = !hunt.on;
+  if (wantTrinket) $('#hstop').hidden = true;
+}
+function renderFeed() {
+  $('#feed').innerHTML = feedL.slice(-6).map(s => '· ' + s).join('<br>');
+}
+function feed(s) { feedL.push(s); renderFeed(); showFeed(true) }
+function showFeed(on) { $('#feed').style.display = on ? 'block' : 'none' }
+
+async function whoami() {
+  const u = (new URLSearchParams(location.search).get('u') || '').trim();
+  if (u && /^[\w.\-]{1,32}$/.test(u)) {
+    try {
+      const r = await post('/api/register', { username: u, name: u });
+      if (r.ok) { tok = r.token; localStorage.setItem('bbHub.tok', tok); }
+      else { tok = '' }
+    } catch (e) { tok = '' }
+  }
+  if (!tok) return enterMode();
+  try {
+    const st = await j('/api/state?token=' + tok);
+    if (!st.ok) { tok = ''; localStorage.removeItem('bbHub.tok'); return enterMode() }
+    me = st; hunt = st.hunt; show('#idcard', false); show('#status', true); show('#scancard', true);
+    $('#un').textContent = '@' + st.username;
+    if (wantTrinket) {
+      const r = await post('/api/hunt/start', { token: tok, target: wantTrinket });
+      if (r.ok) { hunt = r.hunt; feed('searching for ' + (TRK.find(t => t.id == wantTrinket).name)) }
+    }
+    renderHunt(); pollLoop(true);
+  } catch (e) { $('#warn').textContent = 'Hub unreachable — retrying…'; $('#warn').hidden = false; setTimeout(whoami, 3000) }
+}
+
+function enterMode() { show('#idcard', true); show('#status', false); show('#scancard', false) }
+
+$('#ibtn').onclick = async () => {
+  const u = $('#iuser').value.trim(), n = $('#iname').value.trim();
+  if (!/^[\w.\-]{1,32}$/.test(u)) { $('#warn').textContent = 'Use letters, numbers, dots, dashes (max 32)'; $('#warn').hidden = false; return }
+  $('#ibtn').disabled = true;
+  try {
+    const r = await post('/api/register', { username: u, name: n });
+    if (!r.ok) { $('#warn').textContent = r.error || 'failed'; $('#warn').hidden = false; return }
+    tok = r.token; localStorage.setItem('bbHub.tok', tok); $('#warn').hidden = true; whoami();
+  } catch (e) { $('#warn').textContent = 'Hub unreachable'; $('#warn').hidden = false; $('#ibtn').disabled = false }
+};
+
+async function pollLoop(first) {
+  if (!tok) return;
+  try {
+    const st = await j('/api/state?token=' + tok + '&cursor=' + since);
+    $('#warn').hidden = true;
+    if (st.ok) {
+      me = st; hunt = st.hunt; renderHunt();
+      for (const ev of (st.events || [])) {
+        since = Math.max(since, ev.id);
+        if (ev.type == 'connect') feed(`<b>${ev.name || ev.owner}</b> connected to your card`);
+        else if (ev.type == 'scanned') feed(`<b>@${ev.by}</b> scanned your card`);
+        else if (ev.type == 'trinket') feed(`trinket <b>${ev.trinketId}</b> earned with <b>${ev.owner}</b>`);
+      }
+    }
+  } catch (e) { $('#warn').textContent = 'Hub unreachable — retrying…'; $('#warn').hidden = false }
+  setTimeout(() => pollLoop(false), 4000);
+}
+
+$('#hstart').onclick = async () => {
+  const r = await post('/api/hunt/start', { token: tok });
+  if (r.ok) { hunt = r.hunt; renderHunt(); feed('hunt started — 3 fresh trinkets') }
+};
+$('#hstop').onclick = async () => {
+  const r = await post('/api/hunt/stop', { token: tok });
+  if (r.ok) { hunt = r.hunt; renderHunt() }
+};
+
+$('#scanbtn').onclick = async () => {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { $('#warn').textContent = 'Camera needs HTTPS — open this hub over https and try again'; $('#warn').hidden = false; return }
+  try { stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }) }
+  catch (e) { $('#warn').textContent = 'Camera denied — allow access and retry'; $('#warn').hidden = false; return }
+  $('#camwrap').classList.add('open'); $('#cam').srcObject = stream;
+  if ($('#cam').play && $('#cam').play().catch) $('#cam').play().catch(() => {});
+  const w = 560, h = 420, cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+  const ctx = cv.getContext('2d', { willReadFrequently: true });
+  let last = '';
+  const loop = () => {
+    if (!stream) return;
+    if ($('#cam').readyState >= 2) {
+      ctx.drawImage($('#cam'), 0, 0, w, h);
+      const d = ctx.getImageData(0, 0, w, h), r = typeof jsQR === 'function' && jsQR(d.data, w, h);
+      if (r && r.data && r.data !== last) { last = r.data; decoded(r.data); return }
+    }
+    raf = requestAnimationFrame(loop)
+  };
+  raf = requestAnimationFrame(loop);
+};
+
+async function decoded(raw) {
+  stopCam();
+  let r = await post('/api/scan', { token: tok, raw });
+  if (!r.ok) { $('#warn').textContent = r.error; $('#warn').hidden = false; reopen(); return }
+  if (!r.hunt || !r.hunt.on) { feed(`connected with <b>${r.name || r.owner}</b>`); setTimeout(whoami, 200); setTimeout(reopen, 1200); return }
+  const q = await j('/api/quiz?token=' + tok + '&owner=' + encodeURIComponent(r.owner));
+  if (!q.ok) { $('#warn').textContent = q.error; $('#warn').hidden = false; setTimeout(whoami, 200); setTimeout(reopen, 1200); return }
+  startQuiz(q, r.name || r.owner, r.owner);
+  setTimeout(whoami, 200);
+}
+function reopen() { $('#scanbtn').disabled = false }
+
+function stopCam() {
+  if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null }
+  cancelAnimationFrame(raf); $('#camwrap').classList.remove('open');
+}
+
+function startQuiz(q, name, owner) {
+  quiz = { ...q, owner, name };
+  show('#quiz', true); $('#quiz').classList.add('open');
+  $('#qcat').textContent = q.category; $('#qwho').textContent = name;
+  $('#qq').textContent = q.question;
+  $('#qopts').innerHTML = q.options.map((o, i) => `<button data-i="${i}">${o}</button>`).join('');
+  $('#res').textContent = '';
+  $('#qopts').onclick = ev => {
+    const b = ev.target.closest('button'); if (!b) return;
+    answer(+b.dataset.i, b);
+  };
+  const loopT = () => {
+    if (!quiz) return;
+    const rem = quiz.endsAt * 1000 - Date.now();
+    if (!quiz.t0) quiz.t0 = rem;
+    $('#qfill').style.width = Math.max(0, rem / quiz.t0) * 100 + '%';
+    $('#qbar').classList.toggle('low', rem < quiz.t0 / 4);
+    if (rem <= 0) { const nm = quiz.name; stopTick(); quiz = null; $('#res').innerHTML = '<span class="warn">Time up — re-scan ' + nm + ' to try again</span>'; return }
+    tickI = setTimeout(loopT, 100)
+  };
+  loopT();
+}
+function stopTick() { clearTimeout(tickI) }
+
+async function answer(i, b) {
+  [...$('#qopts').children].forEach(x => x.disabled = true);
+  const r = await post('/api/answer', { token: tok, qid: quiz.qid, choice: i });
+  stopTick();
+  const right = r.result == 'correct';
+  b.classList.add(right ? 'ok' : 'bad');
+  if (right) $('#res').innerHTML = '✔ Correct — <b>' + (r.trinket ? TRK.find(t => t.id == r.trinket.id).name : '') + '</b> earned!';
+  else if (r.result == 'wrong') $('#res').innerHTML = '<span class="warn">Wrong — re-scan ' + quiz.name + ' to try again</span>';
+  else $('#res').innerHTML = '<span class="warn">Too late — re-scan ' + quiz.name + ' to try again</span>';
+  setTimeout(whoami, 400);
+  quiz = null;
+}
+whoami();
+</script>
+</body>
+</html>

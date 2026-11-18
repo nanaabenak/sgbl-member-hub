@@ -1,0 +1,12 @@
+bind = "127.0.0.1:8000"
+workers = 3
+threads = 2
+worker_class = "gthread"
+timeout = 60
+graceful_timeout = 30
+keepalive = 5
+max_requests = 2000
+max_requests_jitter = 200
+accesslog = "/var/log/memberhub/access.log"
+errorlog = "/var/log/memberhub/error.log"
+loglevel = "info"

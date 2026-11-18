@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% from "_macros.html" import chip %}
+{% block title %}{{ task.title }}{% endblock %}
+{% block content %}
+<div class="panel green">
+  <div class="pixel-rule"></div>
+  <h1 style="margin-bottom:4px">{{ task.title }}</h1>
+  <p style="margin:0;opacity:.85">{{ chip(task.status) }} · {{ task.scope }} · {{ task.assigned_count }} directly assigned · deadline {{ task.due_at|dt if task.due_at else 'none' }}</p>
+</div>
+
+<div class="panel">
+  <div class="panel-head"><h2>Publishing &amp; assignment</h2><small>drafts are invisible to members</small></div>
+  <form method="post" style="display:inline-block">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="action" value="publish">
+    <button class="primary" type="submit" {{ 'disabled' if task.status == 'published' }}>publish to members ▸</button>
+  </form>
+  <form method="post" style="display:inline-block" data-confirm="Close this task? Members will no longer see it.">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="action" value="close">
+    <button class="ghost" type="submit" {{ 'disabled' if task.status == 'closed' }}>close task</button>
+  </form>
+  <hr>
+  <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="action" value="assign">
+    <div class="form-grid">
+      <label class="field">Visibility
+        <select name="scope"><option value="all" {{ 'selected' if task.scope == 'all' }}>all members</option><option value="selected" {{ 'selected' if task.scope == 'selected' }}>selected members</option></select>
+      </label>
+      <label class="field">Members <small>(for selected visibility; use Ctrl/Cmd to pick several)</small>
+        <select name="user_ids" multiple size="7">
+          {% for m in members %}<option value="{{ m.id }}">{{ m.full_name }} (@{{ m.username }})</option>{% endfor %}
+        </select>
+      </label>
+    </div>
+    <div class="form-actions"><button class="primary" type="submit">save assignment</button></div>
+  </form>
+  {% if assigned %}
+    <p class="panel-note">Currently assigned: {% for a in assigned %}<span class="chip">{{ a.full_name }}</span>{% endfor %}</p>
+  {% endif %}
+</div>
+
+{% if task.description or task.instructions %}
+<div class="g2 grid">
+  {% if task.description %}<div class="panel"><h2>Description</h2><p style="white-space:pre-line">{{ task.description }}</p></div>{% endif %}
+  {% if task.instructions %}<div class="panel"><h2>Instructions</h2><p style="white-space:pre-line">{{ task.instructions }}</p></div>{% endif %}
+</div>
+{% endif %}
+
+<div class="panel">
+  <div class="panel-head"><h2>Submissions ({{ submissions|length }})</h2><small>review evidence and record a decision</small></div>
+  {% if submissions %}
+    {% for s in submissions %}
+    <div style="border:1px solid var(--line);padding:14px;margin-bottom:10px">
+      <div class="panel-head" style="margin-bottom:6px">
+        <div><b>{{ s.full_name }}</b> <small>@{{ s.username }}</small></div>
+        <div>{{ chip(s.status) }}</div>
+      </div>
+      <dl class="kv">
+        <dt>Submitted</dt><dd>{{ s.submitted_at|dt if s.submitted_at else 'not submitted' }}</dd>
+        <dt>Notes</dt><dd>{{ s.note or '—' }}</dd>
+        <dt>Evidence</dt><dd>{% if s.evidence_url %}<a href="{{ s.evidence_url }}" target="_blank" rel="noopener noreferrer">{{ s.evidence_url }} ↗</a>{% else %}—{% endif %}</dd>
+        <dt>Decision</dt><dd>{{ s.reviewer_name or '—' }} · {{ s.reviewed_at|dt if s.reviewed_at else 'pending' }} · {{ s.review_note or '—' }}</dd>
+      </dl>
+      <form method="post" style="margin-top:10px">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="action" value="review">
+        <input type="hidden" name="submission_id" value="{{ s.id }}">
+        <div class="form-grid">
+          <label class="field">Decision
+            <select name="decision"><option value="approved">approve</option><option value="rejected">reject</option><option value="corrections_requested">request corrections</option></select>
+          </label>
+          <label class="field">Review note <input name="review_note" maxlength="1000"></label>
+        </div>
+        <div class="form-actions"><button class="primary sm" type="submit">save decision ▸</button></div>
+      </form>
+    </div>
+    {% endfor %}
+  {% else %}<div class="empty">No submissions yet.</div>{% endif %}
+</div>
+{% endblock %}
+{% block anon_content %}{% endblock %}

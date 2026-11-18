@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% from "_macros.html" import chip, stair %}
+{% block title %}Admin overview{% endblock %}
+{% block content %}
+<div class="panel green">
+  <div class="pixel-rule"></div>
+  <div class="hero-row">
+    {{ stair() }}
+    <div>
+      <h1 style="margin-bottom:4px">Club overview.</h1>
+      <p style="margin:0;opacity:.85">Membership, engagement, sessions and verification in one place.</p>
+    </div>
+  </div>
+</div>
+
+<div class="stats">
+  <div class="stat"><b>{{ stats.members }}</b><span>total members</span></div>
+  <div class="stat"><b>{{ stats.active_members }}</b><span>active members</span></div>
+  <div class="stat"><b>{{ stats.sessions_held }}</b><span>sessions held</span></div>
+  <div class="stat"><b>{{ stats.clicks }}</b><span>Meetup link clicks</span></div>
+</div>
+<div class="stats compact">
+  <div class="stat"><b>{{ stats.unique_clicks }}</b><span>unique clicks (IP hash)</span></div>
+  <div class="stat"><b>{{ stats.confirmed_rsvps }}</b><span>confirmed RSVPs</span></div>
+  <div class="stat"><b>{{ stats.attendance_present }}<small style="font-size:12px">/{{ stats.attendance_records }}</small></b><span>attendance records · {{ stats.attendance_pct }}%</span></div>
+  <div class="stat"><b>{{ stats.task_pct }}%</b><span>tasks approved · {{ stats.tasks_approved }}/{{ stats.tasks_submitted }}</span></div>
+  <div class="stat"><b>{{ stats.pending_verifications }}</b><span>pending verifications</span></div>
+  <div class="stat"><b>{{ stats.pending_tasks }}</b><span>task submissions awaiting review</span></div>
+</div>
+
+<div class="panel">
+  <p class="mut" style="margin:0">A link click is <b>never</b> an RSVP or attendance. Meetup-reported RSVP counts and verified attendance are stored and reported separately.</p>
+</div>
+
+<div class="g2 grid">
+  <section class="panel">
+    <div class="panel-head"><h2>Recent sessions</h2><a class="btn ghost sm" href="{{ url_for('admin.sessions') }}">manage sessions</a></div>
+    {% if recent_sessions %}
+    <div class="table-wrap"><table><thead><tr><th>Session</th><th>Clicks</th><th>RSVPs</th><th>Attended</th></tr></thead><tbody>
+      {% for s in recent_sessions %}
+      <tr><td><a href="{{ url_for('admin.session_detail', session_id=s.id) }}">{{ s.title }}</a><span class="sub">{{ s.starts_at|dt('%d %b') }}</span></td>
+          <td>{{ s.clicks }}</td><td>{{ s.rsvps }}</td><td>{{ s.attended }}</td></tr>
+      {% endfor %}
+    </tbody></table></div>
+    {% else %}<div class="empty">No sessions created yet.</div>{% endif %}
+  </section>
+  <section class="panel">
+    <div class="panel-head"><h2>Pending verification</h2><a class="btn ghost sm" href="{{ url_for('admin.verifications') }}">review queue</a></div>
+    {% if pending %}
+    <div class="table-wrap"><table><thead><tr><th>Member</th><th>Item</th><th>Submitted</th></tr></thead><tbody>
+      {% for p in pending %}
+      <tr><td>{{ p.full_name }}</td><td><a href="{{ url_for('admin.verification_detail', kind=p.kind, submission_id=p.id) }}">{{ p.title }}</a><span class="sub">{{ p.kind|replace('_',' ') }}</span></td><td>{{ p.submitted_at|dt('%d %b') }}</td></tr>
+      {% endfor %}
+    </tbody></table></div>
+    {% else %}<div class="empty">Queue is clear.</div>{% endif %}
+  </section>
+</div>
+
+<div class="panel">
+  <div class="panel-head"><h2>Recent administrative activity</h2><a class="btn ghost sm" href="{{ url_for('admin.audit_log') }}">full audit log</a></div>
+  {% if activity %}
+  <div class="trace">
+    {% for a in activity %}<div>· <b>{{ a.actor }}</b> {{ a.action|replace('_',' ') }} {% if a.details %}<span class="mut">— {{ a.details }}</span>{% endif %} · {{ a.created_at|dt }}</div>{% endfor %}
+  </div>
+  {% else %}<div class="empty">No actions recorded yet.</div>{% endif %}
+</div>
+{% endblock %}
+{% block anon_content %}{% endblock %}

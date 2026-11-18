@@ -1,0 +1,1877 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Builder Card · AWS Student Builder Group</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="libs/qrcode-generator.min.js"></script>
+  <script src="libs/jsqr.min.js"></script>
+  <script src="libs/github-profile.js"></script>
+  <style>
+    :root {
+      --bg: #e9eef3;
+      --cell: #fff;
+      --line: #c5ced9;
+      --ink: #0d1a14;
+      --mut: #566577;
+      --g: #00a85d;
+      --gt: #fff;
+      --l0: #e3e9ef;
+      --l1: #c4efd8;
+      --l2: #80dcab;
+      --l3: #2fc17b;
+      --navy: #1b2a41;
+      --p0: #00a85d;
+      --p1: #0b84c4;
+      --p2: #e07b00;
+      --p3: #d6336c;
+      --p4: #7048e8;
+      box-sizing: border-box;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px)
+    }
+
+    @media (prefers-color-scheme:dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #0b0f14;
+        --cell: #161e29;
+        --line: #566171;
+        --ink: #fff;
+        --mut: #9fb0c3;
+        --g: #00e682;
+        --gt: #0d1a14;
+        --l0: #1f2a38;
+        --l1: #0f3a2a;
+        --l2: #0a7a4c;
+        --l3: #00b868;
+        --navy: #fff;
+        --p0: #00e682;
+        --p1: #38bdf8;
+        --p2: #ff9900;
+        --p3: #ff5c8a;
+        --p4: #a78bfa
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg: #0b0f14;
+      --cell: #161e29;
+      --line: #566171;
+      --ink: #fff;
+      --mut: #9fb0c3;
+      --g: #00e682;
+      --gt: #0d1a14;
+      --l0: #1f2a38;
+      --l1: #0f3a2a;
+      --l2: #0a7a4c;
+      --l3: #00b868;
+      --navy: #fff;
+      --p0: #00e682;
+      --p1: #38bdf8;
+      --p2: #ff9900;
+      --p3: #ff5c8a;
+      --p4: #a78bfa
+    }
+
+    html {
+      scroll-padding-top: env(safe-area-inset-top, 0px)
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 400 13px/1.6 "JetBrains Mono", Consolas, "Courier New", monospace;
+      padding-bottom: 58px
+    }
+
+    .wrap {
+      max-width: 480px;
+      margin: 0 auto;
+      display: grid;
+      gap: 1px;
+      background: var(--line);
+      border-inline: 1px solid var(--line)
+    }
+
+    .c {
+      background: var(--cell);
+      padding: 28px 16px;
+      min-width: 0
+    }
+
+    .green {
+      background: var(--g);
+      color: var(--gt)
+    }
+
+    h1 {
+      font-size: 22px;
+      line-height: 1.15;
+      margin: 0 0 10px;
+      font-weight: 500
+    }
+
+    h2 {
+      font-size: 14px;
+      margin: 0 0 10px;
+      font-weight: 500
+    }
+
+    p {
+      margin: 0 0 12px
+    }
+
+    .mut {
+      color: var(--mut);
+      font-size: 12px
+    }
+
+    input {
+      font: inherit;
+      background: var(--cell);
+      color: var(--ink);
+      border: 1px solid var(--line);
+      padding: 0 10px;
+      min-height: 44px;
+      width: 100%;
+      box-sizing: border-box
+    }
+
+    button,
+    summary {
+      font: inherit;
+      font-size: 13px;
+      background: var(--cell);
+      color: var(--ink);
+      border: 1px solid var(--ink);
+      padding: 0 14px;
+      min-height: 44px;
+      cursor: pointer
+    }
+
+    summary {
+      border: 0;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      font-size: 12px;
+      color: var(--mut)
+    }
+
+    button.p {
+      background: var(--g);
+      color: var(--gt);
+      border-color: var(--g)
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    summary:focus-visible {
+      outline: 2px solid var(--g);
+      outline-offset: 2px
+    }
+
+    .ctl {
+      display: grid;
+      gap: 8px;
+      margin-top: 8px
+    }
+
+    .hero {
+      display: flex;
+      gap: 12px;
+      align-items: stretch;
+      padding: 20px 16px
+    }
+
+    .frame {
+      position: relative;
+      flex: 0 0 58%;
+      aspect-ratio: 1/1;
+      box-sizing: border-box
+    }
+
+    .in {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background: var(--cell);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center
+    }
+
+    #ph {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover
+    }
+
+    #ph[hidden] {
+      display: none
+    }
+
+    .rv {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      grid-template-rows: repeat(8, 1fr);
+      pointer-events: none
+    }
+
+    .rv i {
+      background: var(--g);
+      box-shadow: inset -1px -1px 0 var(--gt);
+      animation: unveil .35s both
+    }
+
+    .cam {
+      position: absolute;
+      right: 10px;
+      bottom: 10px;
+      z-index: 2;
+      min-width: 44px;
+      min-height: 44px;
+      padding: 0 12px;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--cell);
+      border: 1px solid var(--ink);
+      font-size: 12px;
+      cursor: pointer
+    }
+
+    .cam input {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      opacity: 0;
+      cursor: pointer
+    }
+
+    .cam:focus-within {
+      outline: 2px solid var(--g);
+      outline-offset: 2px
+    }
+
+    .cam {
+      transition: opacity .3s
+    }
+
+    .cam.off {
+      opacity: 0;
+      pointer-events: none
+    }
+
+    .cam.off:focus-within {
+      opacity: 1;
+      pointer-events: auto
+    }
+
+    .in {
+      touch-action: manipulation
+    }
+
+    .stairs {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      grid-template-rows: repeat(8, 1fr);
+      min-width: 0
+    }
+
+    .stairs i {
+      background: var(--cell);
+      box-shadow: inset -1px -1px 0 var(--line);
+      animation: pop .4s both
+    }
+
+    .stairs i.g {
+      background: var(--g)
+    }
+
+    .stairs i {
+      position: relative
+    }
+
+    .stairs i::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: var(--g);
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform .55s cubic-bezier(.2, .7, .2, 1);
+      pointer-events: none
+    }
+
+    .stairs i.on::after {
+      transform: scaleX(1);
+      transform-origin: left
+    }
+
+    .stairs i.b {
+      animation: pop .4s both, blink 1.6s 2
+    }
+
+    @keyframes unveil {
+      to {
+        opacity: 0
+      }
+    }
+
+    #av {
+      margin: 0;
+      font: inherit;
+      line-height: 1;
+      font-size: clamp(10px, 3.1vw, 14px);
+      color: var(--g);
+      white-space: pre
+    }
+
+    .chip {
+      display: inline-block;
+      border: 1px solid currentColor;
+      padding: 3px 8px;
+      margin: 0 8px 8px 0;
+      font-size: 11px
+    }
+
+    .chip.g {
+      background: var(--g);
+      color: var(--gt);
+      border-color: var(--g)
+    }
+
+    .live-dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--g);
+      margin-right: 4px;
+      box-shadow: 0 0 6px var(--g);
+      animation: pulse-dot 1.8s infinite;
+      vertical-align: middle;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.35; transform: scale(0.85); }
+    }
+
+    .graph-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 2px
+    }
+
+    #graph {
+      display: grid;
+      grid-template-rows: repeat(7, 10px);
+      grid-auto-flow: column;
+      grid-auto-columns: 10px;
+      gap: 2.5px;
+      width: max-content;
+      min-width: 100%
+    }
+
+    #graph i {
+      aspect-ratio: 1;
+      animation: pop .4s both
+    }
+
+    .l0 {
+      background: var(--l0)
+    }
+
+    .l1 {
+      background: var(--l1)
+    }
+
+    .l2 {
+      background: var(--l2)
+    }
+
+    .l3 {
+      background: var(--l3)
+    }
+
+    .l4 {
+      background: var(--g)
+    }
+
+    .langs {
+      display: flex;
+      gap: 1px;
+      margin-top: 14px;
+      background: var(--line)
+    }
+
+    .langs div {
+      padding: 6px;
+      font-size: 11px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: clip
+    }
+
+    .bds {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px
+    }
+
+    .bd {
+      border: 1px solid var(--line);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0
+    }
+
+    .bd b {
+      font-size: 20px;
+      font-weight: 400;
+      line-height: 1.1;
+      color: var(--g)
+    }
+
+    .bd span {
+      font-size: 12px
+    }
+
+    .bd small {
+      color: var(--mut);
+      font-size: 11px
+    }
+
+    .bd.v {
+      border-color: var(--g)
+    }
+
+    .bd.u {
+      border-style: dashed;
+      opacity: .7
+    }
+
+    .new {
+      animation: blink 1.4s 3
+    }
+
+    #qr {
+      display: grid;
+      grid-template-columns: repeat(25, 1fr);
+      width: min(72vw, 250px);
+      margin: 0 auto
+    }
+
+    #qr i {
+      aspect-ratio: 1;
+      animation: pop .5s both
+    }
+
+    #qr .o {
+      background: var(--g)
+    }
+
+    #qr .k {
+      background: var(--navy)
+    }
+
+    #coll {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--line);
+      border: 1px solid var(--line)
+    }
+
+    #coll div {
+      background: var(--cell);
+      aspect-ratio: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      font-size: 10px;
+      color: var(--mut);
+      overflow: hidden
+    }
+
+    #coll pre {
+      margin: 0;
+      font: inherit;
+      line-height: 1;
+      font-size: clamp(9px, 2.8vw, 13px);
+      color: var(--g)
+    }
+
+    #coll .e {
+      color: var(--line);
+      font-size: 20px
+    }
+
+    #coll .f {
+      animation: pop .5s both
+    }
+
+    .bar {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      max-width: 480px;
+      margin: 0 auto;
+      display: flex;
+      gap: 1px;
+      background: var(--line);
+      border: 1px solid var(--line);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      z-index: 5
+    }
+
+    .bar button {
+      flex: 1;
+      min-height: 56px;
+      border: 0
+    }
+
+    .sh {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: calc(57px + env(safe-area-inset-bottom, 0px));
+      max-width: 480px;
+      margin: 0 auto;
+      background: var(--cell);
+      border: 1px solid var(--g);
+      padding: 14px 16px;
+      transform: translateY(130%);
+      visibility: hidden;
+      transition: transform .25s, visibility .25s;
+      z-index: 4
+    }
+
+    .sh.open {
+      transform: none;
+      visibility: visible
+    }
+
+    .sh .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px
+    }
+
+    .ov {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--line);
+      margin-bottom: 10px
+    }
+
+    .ov div {
+      background: var(--cell);
+      padding: 10px;
+      min-width: 0
+    }
+
+    #secs {
+      display: grid;
+      gap: 1px;
+      background: var(--line)
+    }
+
+    .hd {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px
+    }
+
+    .hd h2 {
+      margin: 0
+    }
+
+    .hl {
+      width: 44px;
+      padding: 0;
+      margin: -10px -10px -10px 0;
+      border: 0;
+      background: none;
+      color: var(--mut);
+      font-size: 24px;
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none
+    }
+
+    .sec.drag {
+      position: relative;
+      z-index: 3;
+      box-shadow: 0 0 0 2px var(--g)
+    }
+
+    @keyframes pop {
+      from {
+        opacity: 0;
+        transform: scale(.4)
+      }
+    }
+
+    @keyframes blink {
+      50% {
+        opacity: .25
+      }
+    }
+
+    @keyframes rev {
+      from {
+        clip-path: inset(0 0 100% 0)
+      }
+    }
+
+    @keyframes march {
+      0% {
+        transform: translateX(0)
+      }
+
+      50% {
+        transform: translateX(8.3%)
+      }
+    }
+
+    @media (prefers-reduced-motion:reduce) {
+      * {
+        animation: none !important;
+        transition: none !important
+      }
+    }
+
+    #lc {
+      display: contents
+    }
+
+    @media (min-width:900px) {
+      body {
+        font-size: 14px;
+        padding: 24px 0 58px
+      }
+
+      .wrap {
+        max-width: 1600px;
+        grid-template-columns: minmax(360px, 440px) minmax(0, 1fr);
+        gap: 16px;
+        background: none;
+        border: 0;
+        align-items: start;
+        padding: 0 24px;
+        box-sizing: border-box
+      }
+
+      .wrap>.c:first-child,
+      .wrap>.c:last-child {
+        grid-column: 1/-1
+      }
+
+      .wrap>.c,
+      #lc,
+      #secs {
+        border: 1px solid var(--line)
+      }
+
+      #lc {
+        display: grid;
+        gap: 1px;
+        background: var(--line);
+        grid-column: 1;
+        grid-row: 2;
+        position: sticky;
+        top: 24px
+      }
+
+      #secs {
+        grid-column: 2;
+        grid-row: 2
+      }
+
+      h1 {
+        font-size: 28px
+      }
+
+      h2 {
+        font-size: 15px
+      }
+
+      .bds {
+        grid-template-columns: repeat(3, 1fr)
+      }
+
+      #coll {
+        grid-template-columns: repeat(5, 1fr)
+      }
+    }
+
+    @media (min-width:1200px) {
+      #secs {
+        grid-template-columns: repeat(2, minmax(0, 1fr))
+      }
+    }
+
+    .trow {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px
+    }
+
+    .trow small {
+      color: var(--mut);
+      font-size: 12px
+    }
+
+    .hicon {
+      width: 13px;
+      height: 13px;
+      vertical-align: -2px;
+      margin-right: 4px;
+      color: var(--g)
+    }
+
+    .tg {
+      position: relative;
+      flex: 0 0 46px;
+      min-height: 26px;
+      width: 46px;
+      padding: 0;
+      background: var(--l0);
+      border: 1px solid var(--line)
+    }
+
+    .tg i {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 18px;
+      height: 18px;
+      background: var(--mut);
+      transition: transform .2s
+    }
+
+    .tg.on {
+      background: var(--g);
+      border-color: var(--g)
+    }
+
+    .tg.on i {
+      transform: translateX(22px);
+      background: var(--gt)
+    }
+
+    .hslots {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height .3s, opacity .3s
+    }
+
+    .hunt .hslots {
+      max-height: 190px;
+      opacity: 1
+    }
+
+    .hslot {
+      border: 1px dashed var(--line);
+      padding: 12px 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      color: var(--mut);
+      min-width: 0;
+      text-align: center
+    }
+
+    .hslot svg {
+      width: 30px;
+      height: 30px;
+      flex: none
+    }
+
+    .hslot.g {
+      border: 1px solid var(--g);
+      background: var(--l1);
+      color: var(--g);
+      animation: pop .5s both
+    }
+
+    .hst {
+      margin: 10px 0 0;
+      font-size: 11px;
+      color: var(--mut)
+    }
+
+    .scan-foot {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px
+    }
+
+    .scan-foot button {
+      flex: 1;
+      font-size: 11px
+    }
+
+    .camwrap {
+      position: relative;
+      margin-top: 12px;
+      border: 1px solid var(--g);
+      overflow: hidden;
+      display: none
+    }
+
+    .camwrap.open {
+      display: block
+    }
+
+    #cam {
+      display: block;
+      width: 100%;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      background: var(--l0)
+    }
+
+    .mkr {
+      position: absolute;
+      width: 26px;
+      height: 26px;
+      border: 2px solid var(--g)
+    }
+
+    .m1 {
+      top: 8px;
+      left: 8px;
+      border-right: 0;
+      border-bottom: 0
+    }
+
+    .m2 {
+      top: 8px;
+      right: 8px;
+      border-left: 0;
+      border-bottom: 0
+    }
+
+    .m3 {
+      bottom: 8px;
+      left: 8px;
+      border-right: 0;
+      border-top: 0
+    }
+
+    .m4 {
+      bottom: 8px;
+      right: 8px;
+      border-left: 0;
+      border-top: 0
+    }
+
+    #qv {
+      display: none
+    }
+
+    #qv.open {
+      display: block
+    }
+
+    .qhead {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px
+    }
+
+    .qk {
+      display: inline-block;
+      border: 1px solid currentColor;
+      padding: 2px 8px;
+      font-size: 11px;
+      color: var(--mut)
+    }
+
+    #qtime {
+      font-size: 20px;
+      font-weight: 400;
+      color: var(--g)
+    }
+
+    .qbar {
+      height: 4px;
+      background: var(--l0);
+      margin: 10px 0 12px
+    }
+
+    #qfill {
+      display: block;
+      height: 100%;
+      width: 100%;
+      background: var(--g)
+    }
+
+    .qbar.low #qfill {
+      animation: blink .5s infinite
+    }
+
+    #qwho {
+      margin: 0 0 12px;
+      font-size: 12px;
+      color: var(--mut)
+    }
+
+    #qq {
+      margin: 0 0 12px;
+      font-size: 13px
+    }
+
+    .qopts {
+      display: grid;
+      gap: 8px
+    }
+
+    .qopts button {
+      text-align: left;
+      font-size: 12px;
+      border-color: var(--line)
+    }
+
+    .qopts button.ok {
+      border-color: var(--g);
+      background: var(--l1)
+    }
+
+    .qopts button.bad {
+      border-color: var(--p3);
+      color: var(--p3)
+    }
+
+    .res {
+      margin: 0 0 12px;
+      font-size: 12px
+    }
+
+    .toast {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: calc(62px + env(safe-area-inset-bottom, 0px));
+      max-width: 480px;
+      margin: 0 auto;
+      background: var(--cell);
+      border: 1px solid var(--g);
+      padding: 10px 14px;
+      font-size: 12px;
+      z-index: 6;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity .25s, transform .25s;
+      pointer-events: none
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: none
+    }
+
+    .bignum {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 30;
+      background: var(--bg);
+      opacity: .97;
+      pointer-events: none;
+      font-size: clamp(72px, 26vw, 180px);
+      font-weight: 500;
+      color: var(--g)
+    }
+
+    .bignum.zoom {
+      animation: cdpop .65s both
+    }
+
+    @keyframes cdpop {
+      from {
+        opacity: 0;
+        transform: scale(2)
+      }
+
+      65% {
+        opacity: 1;
+        transform: scale(.96)
+      }
+    }
+
+    .lk {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      min-height: 44px;
+      padding: 0 14px;
+      border: 1px solid var(--ink);
+      color: var(--ink);
+      text-decoration: none;
+      box-sizing: border-box
+    }
+
+    .lk:hover,
+    .lk:focus-visible {
+      background: var(--g);
+      color: var(--gt);
+      border-color: var(--g);
+      outline: none
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="c">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px"><svg
+          viewBox="0 0 40 34" width="48" height="41" fill="none" role="img" aria-label="AWS"><text x="0" y="17"
+            fill="currentColor" font-family="Arial,sans-serif" font-weight="700" font-size="20">aws</text>
+          <path d="M2 24 Q18 32 34 23" stroke="#ff9900" stroke-width="2.2" stroke-linecap="round" />
+          <path d="M30 22.5 L34.5 22.8 L33.2 27" stroke="#ff9900" stroke-width="2" stroke-linecap="round" />
+        </svg><span class="mut">student builder group</span></div>
+      <input id="u" value="ama-codes" hidden>
+      <h1>Builder Card</h1>
+      <span class="mut">AWS Student Builder Group · your profile, badges &amp; connections</span>
+    </div>
+
+    <div id="lc">
+      <div class="c hero">
+        <div class="frame">
+          <div class="in">
+            <pre id="av" aria-label="Generated ASCII avatar"></pre><img id="ph" alt="Profile photo" hidden>
+            <div class="rv" id="rv"></div>
+          </div>
+          <label class="cam"><input type="file" id="pf" accept="image/*"
+              aria-label="Choose a profile photo"><span>Photo</span></label>
+        </div>
+        <div class="stairs" id="st" aria-hidden="true"></div>
+      </div>
+      <div class="c green">
+        <h1 id="nm">Ama Mensah</h1>
+        <p id="bio"></p>
+        <div id="chips"></div>
+        <p id="stats" style="margin:0;opacity:.85;font-size:12px"><span id="cn">5</span> connections</p>
+      </div>
+    </div>
+
+    <div id="secs">
+      <div class="c sec" id="s-act">
+        <h2>Activity <small class="mut" id="act-total" style="font-size:11px;font-weight:normal;margin-left:8px"></small></h2>
+        <div class="graph-wrap">
+          <div id="graph" role="img" aria-label="Contribution activity grid"></div>
+        </div>
+        <p class="mut" id="graph-note" style="margin:8px 0 0;font-size:11px" hidden></p>
+        <div class="langs" id="langs"></div>
+        <div id="live-feed" style="margin-top:14px;border-top:1px solid var(--line);padding-top:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <small class="mut"><span class="live-dot"></span> Real-time activity</small>
+            <button id="btn-sync" style="font-size:10px;min-height:24px;padding:0 8px;border:1px solid var(--line);cursor:pointer">↻ Sync live</button>
+          </div>
+          <div id="events-list" style="display:grid;gap:6px"></div>
+        </div>
+      </div>
+      <div class="c sec" id="qrc">
+        <h2>Scan to connect</h2>
+        <div id="qr" role="img" aria-label="Your builder card QR code"></div>
+        <p class="mut" id="scnote" style="margin-top:12px;text-align:center">Your <b>builder card QR</b> — it encodes
+          your username &amp; name. Friends scan it to connect and get quizzed!</p>
+
+        <div class="trow" style="margin-top:14px">
+          <small><svg class="hicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+              stroke-linecap="round" aria-hidden="true">
+              <circle cx="10.5" cy="10.5" r="6" />
+              <path d="M15.2 15.2 21 21" />
+            </svg>Scavenger hunt mode</small>
+          <button class="tg" id="hbtn" role="switch" aria-checked="false"
+            aria-label="Toggle scavenger hunt mode"><i></i></button>
+        </div>
+        <div class="hslots" id="hslots"></div>
+        <p class="hst" id="hst"></p>
+        <div class="scan-foot" id="hfoot" hidden><button id="hreset">Reset hunt</button></div>
+
+        <div class="camwrap" id="camwrap">
+          <video id="cam" muted autoplay playsinline></video>
+          <i class="mkr m1"></i><i class="mkr m2"></i><i class="mkr m3"></i><i class="mkr m4"></i>
+          <div id="scanmsg" class="mut"
+            style="position:absolute;left:8px;right:8px;bottom:8px;padding:4px 8px;font-size:11px;background:var(--l0);border:1px solid var(--line);display:none">
+          </div>
+        </div>
+
+        <div id="qv" hidden>
+          <div class="qhead"><span class="qk" id="qcat"></span><b id="qtime">20</b></div>
+          <div class="qbar" id="qbar"><i id="qfill"></i></div>
+          <p class="mut" id="qwho" style="margin:0 0 12px;font-size:12px"></p>
+          <p id="qq"></p>
+          <div class="qopts" id="qopts"></div>
+        </div>
+      </div>
+
+      <div class="c sec" id="s-col">
+        <h2>Collected builders (<span id="cc">5</span>/20)</h2>
+        <div id="coll"></div>
+      </div>
+
+      <div class="c sec" id="s-links" hidden>
+        <h2>Contact &amp; links</h2>
+        <div class="ctl" id="links"></div>
+      </div>
+
+      <div class="c sec" id="s-bd">
+        <h2>Badges</h2>
+        <div class="bds" id="bds"></div>
+        <p class="mut" style="margin:12px 0 0">Solid green border: verified. Dashed: self-claimed.</p>
+      </div>
+
+    </div>
+    <div class="c mut" id="note" style="font-size:11px">Loading config…</div>
+  </div>
+
+  <div class="sh" id="sh" role="dialog" aria-label="Connection overlap">
+    <div class="top"><b>You × <span id="on"></span></b><button id="cl">Close</button></div>
+    <div class="ov" id="ov"></div>
+    <p class="mut" id="ot" style="margin:0"></p>
+  </div>
+  <div class="toast" id="notebar" role="status" aria-live="polite"></div>
+  <div class="bar"><button id="mq">My QR</button><button class="p" id="sc">Scan someone</button></div>
+
+  <script>
+    const $ = s => document.querySelector(s);
+    const C = '█▓▒░ ';
+    const rnd = s => { let h = 1779033703 ^ s.length; for (let i = 0; i < s.length; i++) { h = Math.imul(h ^ s.charCodeAt(i), 3432918353); h = h << 13 | h >>> 19 } return () => { h = Math.imul(h ^ h >>> 16, 2246822507); h = Math.imul(h ^ h >>> 13, 3266489909); h ^= h >>> 16; return (h >>> 0) / 4294967296 } };
+    const mk = (c, d) => { const e = document.createElement('i'); e.className = c; e.style.animationDelay = d + 'ms'; return e };
+    let evolved = false;
+    function avatar(n, ev) {
+      const r = rnd(n), R = 9, K = 5, out = [];
+      if (ev) out.push('        ██        ', '      ▄▄██▄▄      ');
+      for (let y = 0; y < R; y++) {
+        const h = []; for (let x = 0; x < K; x++) {
+          const t = r() + x / 4 * .5 - (y == 0 || y == R - 1 ? .45 : 0); let i = t > 1.1 ? 0 : t > .8 ? 1 : t > .55 ? 2 : t > .3 ? 3 : 4;
+          if (x == 1 || x == 2) { if (y == 3) i = 4; if (y == 2 || y == 4) i = 0 }
+          if (y == 6 && x >= 2) i = 0; h.push(C[i])
+        }
+        out.push(h.concat(h.slice(0, -1).reverse()).map(c => c + c).join(''))
+      }
+      return out.join('\n')
+    }
+    const mini = n => { const r = rnd(n); return [0, 1, 2].map(() => { const a = C[r() * 4 | 0], b = C[r() * 4 | 0]; return a + b + a }).join('\n') };
+    let tm;
+    function typeIn(el, txt) {
+      clearInterval(tm);
+      if (matchMedia('(prefers-reduced-motion:reduce)').matches) { el.textContent = txt; return }
+      let i = 0; tm = setInterval(() => { i += 9; el.textContent = txt.slice(0, i); if (i >= txt.length) clearInterval(tm) }, 14)
+    }
+    let photo = null;
+    function reveal() {
+      const rv = $('#rv'); rv.innerHTML = ''; if (matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+      for (let r = 0; r < 8; r++)for (let c = 0; c < 6; c++) { const d = document.createElement('i'); d.style.animationDelay = (r + c) * 50 + 'ms'; rv.appendChild(d) }
+    }
+    function hero(u, fx) {
+      const has = !!photo; $('#ph').hidden = !has; $('#av').hidden = has; $('.cam span').textContent = has ? 'Change' : 'Photo';
+      if (has) { $('#ph').src = photo; if (fx) reveal() } else { $('#rv').innerHTML = ''; typeIn($('#av'), avatar(u, evolved)) }
+    }
+    const PT = ['.....G', '....GG', '...G..', '.G....', 'G...G.', '....BG', '..G...', 'G.....'];
+    $('#st').innerHTML = PT.join('').split('').map((c, i) => { const d = ((i % 6) + (i / 6 | 0)) * 60; return `<i class="${c == 'G' ? 'g' : c == 'B' ? 'g b' : ''}" style="animation-delay:${d}ms${c == 'B' ? ',' + (d + 1400) + 'ms' : ''}"></i>` }).join('');
+    let CURRENT_CONTRIBS = null;
+    let CURRENT_TOTAL = null;
+    let CURRENT_EVENTS = [];
+
+    function renderLiveFeed(events) {
+      const list = $('#events-list');
+      if (!list) return;
+      if (!events || !events.length) {
+        list.innerHTML = '<span class="mut" style="font-size:11px">No recent public events</span>';
+        return;
+      }
+      list.innerHTML = events.map(e => `
+        <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;gap:8px;padding:4px 0;border-bottom:1px dashed var(--line)">
+          <div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0">
+            <span>${esc(e.action)}</span>
+            <a href="${esc(e.repoUrl)}" target="_blank" rel="noopener noreferrer" style="color:var(--g);text-decoration:none;margin-left:4px">${esc(e.repoName)}</a>
+            ${e.detail ? `<span class="mut">(${esc(e.detail)})</span>` : ''}
+          </div>
+          <span class="mut" style="flex:none;font-size:10px">${esc(e.timeAgo)}</span>
+        </div>
+      `).join('');
+    }
+
+    async function syncLiveActivity(force = false) {
+      // Account = optional "github" override, else profile.username
+      const ghUser = (typeof CFG.github === 'string' && CFG.github.trim() || CFG.profile.username || '').trim();
+      let note = '';
+      if (!ghUser || !window.GitHubProfile) {
+        CURRENT_CONTRIBS = null;
+        CURRENT_TOTAL = null;
+        return note;
+      }
+      try {
+        const [ghProfile, ghContribs, ghEvents] = await Promise.all([
+          window.GitHubProfile.fetchProfile(ghUser, force),
+          window.GitHubProfile.fetchContributions(ghUser, force),
+          window.GitHubProfile.fetchEvents(ghUser, force)
+        ]);
+        CURRENT_EVENTS = ghEvents || [];
+
+        // GitHub-owned live fields override config (config = offline fallback)
+        if (ghProfile) {
+          const p = CFG.profile;
+          if (ghProfile.name) p.name = ghProfile.name;
+          if (ghProfile.login) p.username = ghProfile.login;
+          if (ghProfile.avatarUrl) p.photo = ghProfile.avatarUrl;
+          if (ghProfile.bio) p.bio = ghProfile.bio;
+          if (typeof ghProfile.publicRepos === 'number') p.repos = ghProfile.publicRepos;
+          if (typeof ghProfile.followers === 'number') p.followers = ghProfile.followers;
+          note += 'GitHub profile live. ';
+        } else {
+          note += 'GitHub profile unavailable, using config values. ';
+        }
+
+        if (ghContribs) {
+          const rawList = Array.isArray(ghContribs) ? ghContribs : ghContribs.contributions;
+          const totalCount = !Array.isArray(ghContribs) ? ghContribs.total : null;
+          if (rawList && rawList.length) {
+            CURRENT_CONTRIBS = rawList;
+            CURRENT_TOTAL = typeof totalCount === 'number' ? totalCount : rawList.reduce((s, x) => s + (x.count || 0), 0);
+            note += 'Activity grid live. ';
+          } else {
+            CURRENT_CONTRIBS = null;
+            CURRENT_TOTAL = null;
+            note += 'Activity grid unavailable. ';
+          }
+        } else {
+          CURRENT_CONTRIBS = null;
+          CURRENT_TOTAL = null;
+          note += 'Activity grid unavailable. ';
+        }
+      } catch (err) {
+        console.warn('[BuilderCard] Error loading GitHub live data:', err);
+        CURRENT_CONTRIBS = null;
+        CURRENT_TOTAL = null;
+        note += 'GitHub data unavailable. ';
+      }
+      paint();
+      renderLiveFeed(CURRENT_EVENTS);
+      return note;
+    }
+
+    /**
+     * Render the GitHub activity grid into #graph.
+     * Each column represents one week (7 days stacked vertically).
+     * Tooltip on each day cell shows: "N contributions on DATE".
+     * If contribs is null/empty or unavailable, renders an empty grid with an "Activity unavailable" note.
+     */
+    function renderContributions(contribs, total) {
+      const g = $('#graph');
+      const noteEl = $('#graph-note');
+      const totalEl = $('#act-total');
+      if (!g) return;
+      g.innerHTML = '';
+
+      if (totalEl) {
+        totalEl.textContent = typeof total === 'number'
+          ? `${total.toLocaleString()} contributions in the past year`
+          : '';
+      }
+
+      if (!contribs || !contribs.length) {
+        // Fallback: render 20 empty columns of level-0 squares
+        for (let c = 0; c < 20; c++) {
+          for (let y = 0; y < 7; y++) {
+            const cell = document.createElement('i');
+            cell.className = 'l0';
+            g.appendChild(cell);
+          }
+        }
+        if (noteEl) {
+          noteEl.textContent = 'Activity unavailable';
+          noteEl.hidden = false;
+        }
+        return;
+      }
+
+      if (noteEl) {
+        noteEl.textContent = '';
+        noteEl.hidden = true;
+      }
+
+      // Render the real contribution squares (levels 0 to 4)
+      contribs.forEach((day, index) => {
+        const cell = document.createElement('i');
+        const lvl = Math.min(4, Math.max(0, day.level || 0));
+        cell.className = 'l' + lvl;
+        cell.title = window.GitHubProfile
+          ? window.GitHubProfile.formatTooltip(day.count || 0, day.date || '')
+          : `${day.count || 0} contributions on ${day.date || ''}`;
+        cell.style.animationDelay = Math.min(index * 3, 500) + 'ms';
+        g.appendChild(cell);
+      });
+    }
+
+    function qrPayload(u) {
+      const n = myName().slice(0, 64);
+      return 'BB1|' + u.slice(0, 32) + '|' + n;
+    }
+    function qr(u) {
+      const q = $('#qr'); q.innerHTML = '';
+      if (typeof qrcode === 'function') {
+        try {
+          const g = qrcode(0, 'M');
+          g.addData(qrPayload(u)); g.make();
+          const N = g.getModuleCount();
+          $('#qr').style.gridTemplateColumns = `repeat(${N},1fr)`;
+          for (let y = 0; y < N; y++)for (let x = 0; x < N; x++) {
+            const corner = (x < 7 && y < 7) || (x >= N - 7 && y < 7) || (x < 7 && y >= N - 7);
+            q.appendChild(mk(g.isDark(y, x) ? (corner ? 'k' : 'o') : '', Math.hypot(x - (N - 1) / 2, y - (N - 1) / 2) * 26))
+          }
+          return
+        } catch (e) { }
+      }
+      $('#qr').style.gridTemplateColumns = '';
+      const r = rnd(u + 'q'), N = 25;
+      for (let y = 0; y < N; y++)for (let x = 0; x < N; x++) {
+        let on = r() > .52, f = 0;
+        for (const [a, b] of [[0, 0], [N - 7, 0], [0, N - 7]]) {
+          const dx = x - a, dy = y - b;
+          if (dx >= -1 && dx <= 7 && dy >= -1 && dy <= 7) { f = 1; on = dx >= 0 && dy >= 0 && dx <= 6 && dy <= 6 && (dx == 0 || dx == 6 || dy == 0 || dy == 6 || (dx >= 2 && dx <= 4 && dy >= 2 && dy <= 4)) }
+        }
+        q.appendChild(mk(on ? (f ? 'k' : 'o') : '', Math.hypot(x - 12, y - 12) * 40))
+      }
+    }
+    /* ===== Config layer: everything a student edits lives in config.json =====
+       Precedence rules:
+       - Identity fields (location, lookingFor, languages, badges, links) are
+         config-owned — GitHub never overrides them.
+       - Live fields (name, bio, photo, repos, followers, activity grid, feed)
+         are GitHub-owned when a GitHub account resolves; config values are the
+         offline fallback.
+       - GitHub account = profile.username, unless "github" (an optional string
+         override) is set. */
+    const DEF = {
+      profile: { username: '', name: 'Builder', bio: '', location: '', lookingFor: '', photo: '', repos: 0, followers: 0, topics: [] },
+      github: '',
+      languages: [],
+      badges: [],
+      links: [],
+      builders: [],
+      collected: 0,
+      hub: ''
+    };
+    const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    const merge = u => ({
+      ...DEF,
+      ...u,
+      profile: { ...DEF.profile, ...(u && u.profile) },
+      github: typeof (u && u.github) === 'string' ? u.github : DEF.github
+    });
+    let CFG = window.CFG = DEF;
+
+    function paint() {
+      const p = CFG.profile;
+      document.title = p.name + ' · Builder Card';
+      $('#u').value = p.username; photo = p.photo || null;
+      $('#nm').textContent = p.name; $('#bio').textContent = p.bio;
+      $('#chips').innerHTML = `<span class="chip">@${esc(p.username)}</span>` + (p.lookingFor ? `<span class="chip">looking for: ${esc(p.lookingFor)}</span>` : '') + (p.location ? `<span class="chip">${esc(p.location)}</span>` : '');
+      $('#stats').innerHTML = `${esc(p.repos)} repos · ${esc(p.followers)} followers · <span id="cn">0</span> connections`;
+      $('#langs').innerHTML = CFG.languages.map(([n, v], i) => `<div class="l${Math.max(0, 4 - i)}" style="flex:${+v || 1}">${v > 14 ? esc(n) + ' ' : ''}${esc(v)}%</div>`).join('');
+      $('#bds').innerHTML = CFG.badges.map(b => `<div class="bd ${b.status == 'verified' ? 'v' : 'u'} ${b.new ? 'new' : ''}"><b>${esc(b.icon || '◈')}</b><span>${esc(b.label)}</span><small>${b.new ? 'just earned' : esc(b.note || '')}</small></div>`).join('');
+      const ok = (CFG.links || []).filter(l => l && l.label && /^(https?:|mailto:)/i.test(l.url));
+      $('#links').innerHTML = ok.map(l => `<a class="lk" href="${esc(l.url)}" target="_blank" rel="noopener noreferrer"><span>${esc(l.label)}</span><span>↗</span></a>`).join('');
+      $('#s-links').hidden = !ok.length;
+      $('#graph').setAttribute('aria-label', CURRENT_CONTRIBS ? 'Contribution graph from GitHub activity' : 'Contribution activity grid');
+      coll(); render();
+      renderLiveFeed(CURRENT_EVENTS);
+    }
+
+    async function boot() {
+      let note = '', userConfig = {};
+
+      // 1. Load config: try config.json; on failure fall back to the minimal DEF defaults
+      try {
+        const r = await fetch('config.json', { cache: 'no-cache' });
+        if (!r.ok) throw 0;
+        userConfig = await r.json();
+        note = 'Loaded config.json. ';
+      } catch (e) {
+        note = e instanceof SyntaxError
+          ? 'config.json has a JSON syntax error (check commas and quotes), showing defaults. '
+          : 'config.json not loaded, showing defaults (double-click file:// or serve over http to load it). ';
+      }
+
+      // Allow overriding username via URL query parameter for testing/demos (e.g. ?u=octocat or ?u=torvalds)
+      const urlParams = new URLSearchParams(window.location.search);
+      const queryUser = urlParams.get('u') || urlParams.get('github') || urlParams.get('user');
+      if (queryUser) {
+        userConfig.github = queryUser.trim();
+        if (userConfig.profile) {
+          userConfig.profile.username = queryUser.trim();
+          userConfig.profile.name = queryUser.trim();
+        }
+        note = `(Previewing @${queryUser.trim()} from URL) ` + note;
+      }
+
+      CFG = window.CFG = merge(userConfig);
+
+      // 3. Connect live GitHub profile and activity grid (cached in localStorage for 3 hours); also repaints feed/grid
+      note += await syncLiveActivity(false);
+
+      if (!hunt.connected.length && !got.length) got = CFG.builders.slice(0, CFG.collected).map(b => ({ u: b.username, n: b.name || b.username, g: false }));
+      for (const c of hunt.connected) if (!got.some(x => x.u == c.u)) got.push(c);
+      paint();
+      $('#note').textContent = note + 'Drag ⠿ to reorder sections. Double-tap the photo to change it.';
+      reflowWide();
+      document.dispatchEvent(new CustomEvent('cfg-ready', { detail: CFG }));
+      if (CFG.hub) hubStart();
+    }
+
+    const TOP = ['serverless', 'ai', 'web', 'data', 'devops'], LK = ['a frontend designer', 'a backend dev', 'a hackathon team', 'a mentor'];
+    function overlap(n) {
+      const B = CFG.builders.find(b => b.username == n || b.name == n) || {}, r = rnd('o' + n + CFG.profile.username);
+      const mine = CFG.languages.map(l => l[0]), myT = CFG.profile.topics || [];
+      let sh, tp, lk;
+      if (B.languages || B.topics) { sh = (B.languages || []).filter(x => mine.includes(x)); tp = (B.topics || []).filter(x => myT.includes(x)); lk = B.lookingFor || 'a teammate' }
+      else { sh = ['Python', 'TypeScript', 'Go', 'Rust', 'HCL'].filter(() => r() > .55).slice(0, 3); tp = TOP.filter(() => r() > .6).slice(0, 2); lk = LK[r() * 4 | 0] }
+      const ch = a => a.length ? a.map(x => `<span class="chip g">${esc(x)}</span>`).join('') : '<span class="mut">none yet</span>';
+      $('#on').textContent = B.name || n;
+      $('#ov').innerHTML = `<div><small class="mut">Shared languages</small><br>${ch(sh)}</div><div><small class="mut">Shared topics</small><br>${ch(tp)}</div>`;
+      $('#ot').textContent = (B.name || n) + ' is looking for ' + lk + '. You two could build something together.';
+      $('#sh').classList.add('open')
+    }
+    function coll(fresh) {
+      const c = $('#coll'); c.innerHTML = '';
+      for (let i = 0; i < 20; i++) {
+        const d = document.createElement('div');
+        if (i < got.length) { if (fresh == i) d.className = 'f'; const e = got[i]; d.innerHTML = '<pre>' + mini(e.u) + '</pre>' + (e.n || e.u).slice(0, 10) }
+        else { d.className = 'e'; d.textContent = '+' }
+        c.appendChild(d)
+      }
+      $('#cc').textContent = got.length; $('#cn').textContent = got.length
+    }
+    function render() { const u = $('#u').value.trim() || 'student'; hero(u); renderContributions(CURRENT_CONTRIBS, CURRENT_TOTAL); qr(u) }
+    $('#u').oninput = render;
+
+    /* ---------- Trinket hunt ---------- */
+    const TRK = [
+      { id: 'cloud', name: 'Cloud Node', svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18h10a4 4 0 0 0 0-8 5 5 0 0 0-9.8-1.2A4.5 4.5 0 0 0 7 18z"/></svg>' },
+      { id: 'chip', name: 'AI Core', svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="7" y="7" width="10" height="10"/><rect x="10.5" y="10.5" width="3" height="3"/><path d="M9 7V3M12 7V3M15 7V3M9 21v-4M12 21v-4M15 21v-4M7 9H3M7 12H3M7 15H3M21 9h-4M21 12h-4M21 15h-4"/></svg>' },
+      { id: 'srv', name: 'Backend Rig', svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="4" y="4" width="16" height="5"/><rect x="4" y="10" width="16" height="5"/><rect x="4" y="16" width="16" height="4"/><path d="M7 6.5h.01M7 12.5h.01M7 18h.01"/></svg>' },
+      { id: 'db', name: 'Data Vault', svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><ellipse cx="12" cy="5.5" rx="7" ry="2.5"/><path d="M5 5.5v13c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-13M5 12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5"/></svg>' },
+      { id: 'branch', name: 'Branch Token', svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>' },
+      { id: 'zap', name: 'Bolt Charge', svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>' },
+      { id: 'shield', name: 'Aegis Shield', svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>' }
+    ];
+    const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.random() * (i + 1) | 0;[a[i], a[j]] = [a[j], a[i]] } return a };
+    const freshTargets = h => { h.targets = shuffle(TRK.map(t => t.id)).slice(0, 3) };
+    const QUIZ = [
+      { c: 'AWS', q: 'Which AWS service lets you run code without provisioning or managing servers?', o: ['Lambda', 'EC2', 'S3', 'Redshift'], a: 0 },
+      { c: 'AWS', q: "Which service is Amazon's object storage?", o: ['S3', 'EBS', 'RDS', 'SQS'], a: 0 },
+      { c: 'AWS', q: 'What does IAM primarily manage?', o: ['Access and permissions', 'Image assets', 'Procurement and invoices', 'Instance autoscaling'], a: 0 },
+      { c: 'AWS', q: 'Which feature keeps EC2 instances available as demand changes?', o: ['Auto Scaling', 'Route 53 zones', 'Kinesis streams', 'Snowball jobs'], a: 0 },
+      { c: 'AWS', q: 'You want to store media and serve it fast worldwide. Best combo?', o: ['S3 + CloudFront', 'RDS + SES', 'EC2 + EBS', 'Lambda + SNS'], a: 0 },
+      { c: 'AWS', q: 'Which managed service fits relational (SQL) workloads?', o: ['RDS', 'S3', 'SES', 'CloudFront'], a: 0 },
+      { c: 'AWS', q: 'Who patches the operating system of an on-demand EC2 instance?', o: ['The customer', 'AWS, always', 'Nobody', 'Lambda'], a: 0 },
+      { c: 'Cloud', q: "'Serverless' in cloud computing means…", o: ['You do not provision or manage the servers', 'There are literally no servers', 'Code only runs offline', 'Servers are always free'], a: 0 },
+      { c: 'Cloud', q: 'Uniform scaling up/out in the cloud means…', o: ['Adding resources to handle demand growth', 'Manually reinstalling bigger machines daily', 'Data going offline', 'Deleting ignored backups'], a: 0 },
+      { c: 'Cloud', q: 'Infrastructure as Code (IaC) exists to…', o: ['Define infrastructure in versionable files', 'Encrypt every packet', 'Cache static assets', 'Send transactional email'], a: 0 },
+      { c: 'Cloud', q: 'High availability means…', o: ['The system stays usable through failures', 'Bandwidth is very high', 'Backups are deleted', 'Idle servers are extra'], a: 0 },
+      { c: 'Backend', q: 'What does HTTP status 404 mean?', o: ['Not found', 'Created', 'Unauthorized', 'Server error'], a: 0 },
+      { c: 'Backend', q: 'A POST that creates a resource usually answers…', o: ['201 Created', '302 Found', '401 Unauthorized', '503 Service Unavailable'], a: 0 },
+      { c: 'Backend', q: 'Which one is NOT a database?', o: ['Kubernetes', 'MongoDB', 'PostgreSQL', 'Redis'], a: 0 },
+      { c: 'Backend', q: 'In a REST API, GET /users/42 should…', o: ['Return that single user', 'Create user 42', 'Delete user 42', 'Reset a password'], a: 0 },
+      { c: 'Backend', q: 'A token issued at login that is sent on later requests is normally used for…', o: ['Authentication', 'Caching', 'Rate limiting', 'Load balancing'], a: 0 },
+      { c: 'AI', q: 'A machine-learning model mostly "learns" from…', o: ['Data', 'Batteries', 'The browser console', 'Ethernet cables'], a: 0 },
+      { c: 'AI', q: 'Generative AI is used to…', o: ['Create new text, images or code', 'Only sort spreadsheets', 'Print ID cards', 'Refill paper trays'], a: 0 },
+      { c: 'AI', q: 'Running a trained model to get answers is called…', o: ['Inference', 'Labeling', 'Rendering', 'Compression'], a: 0 },
+      { c: 'AWS', q: 'What does CloudFront do?', o: ['Delivers content from edge locations', 'Encrypts data at rest', 'Runs Python handlers', 'Sends marketing emails'], a: 0 },
+      { c: 'DevOps', q: 'A container image is…', o: ['A packaged app plus its dependencies', 'A screenshot of a server', 'An OS licence file', 'A CPU usage chart'], a: 0 },
+      { c: 'DevOps', q: 'CI/CD primarily exists to…', o: ['Ship code changes safely and often', 'Design logos', 'Store coffee preferences', 'Mute alarms'], a: 0 }
+    ];
+    const HK = 'builderHunt.v2';
+    let hunt = { ver: 2, on: false, targets: [], won: [], connected: [] };
+    try {
+      const s = JSON.parse(localStorage.getItem(HK) || 'null');
+      if (s && s.ver == 2 && Array.isArray(s.targets) && Array.isArray(s.won) && Array.isArray(s.connected)) {
+        hunt = s; if (typeof hunt.on != 'boolean') hunt.on = false;
+        if (hunt.targets.length != 3) freshTargets(hunt)
+      } else freshTargets(hunt)
+    } catch (e) { freshTargets(hunt) }
+    const saveHunt = () => { try { localStorage.setItem(HK, JSON.stringify(hunt)) } catch (e) { } };
+    let got = [];
+    const myName = () => (window.CFG && CFG.profile && CFG.profile.name) || 'Builder';
+    function renderHunt() {
+      $('#hslots').innerHTML = hunt.targets.map(id => {
+        const t = TRK.find(x => x.id == id), done = hunt.won.includes(id);
+        return `<div class="hslot ${done ? 'g' : ''}" onclick="gotoHubTrinket('${esc(id)}')">${t.svg}${done ? '✔ ' : ''}${t.name}</div>`
+      }).join('');
+      const k = hunt.won.length;
+      $('#hst').innerHTML = k == 3 ? '<b>Hunt complete — all 3 trinkets collected!</b>' : `<b>${k}/3</b> trinkets collected${hunt.on ? ' — scan a builder card to earn the next one' : ''}`
+    }
+    function gotoHubTrinket(id) {
+      const hub = (CFG && CFG.hub || '').replace(/\/+$/, '');
+      const u = (CFG && CFG.profile && CFG.profile.username) || '';
+      if (!hub) { note('No hunt hub configured — add "hub" to config.json'); return }
+      location.href = hub + '/?u=' + encodeURIComponent(u) + '&id=' + encodeURIComponent(id);
+    }
+    function setScanMode(m) {
+      $('#qr').hidden = m != 'qr'; $('#scnote').hidden = m != 'qr';
+      $('#camwrap').classList.toggle('open', m == 'cam');
+      $('#qv').classList.toggle('open', m == 'quiz');
+    }
+    const syncHuntUi = () => {
+      $('#hbtn').classList.toggle('on', hunt.on); $('#hbtn').setAttribute('aria-checked', hunt.on);
+      $('#hfoot').hidden = !hunt.on; $('#qrc').classList.toggle('hunt', hunt.on);
+    };
+    const postHub = (path, body) => hubApi(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    $('#hbtn').onclick = async () => {
+      if (CFG.hub) {
+        const on = !hunt.on;
+        try {
+          const j = await (await postHub('/api/hunt/' + (on ? 'start' : 'stop'), { token: hubTok })).json();
+          if (!j.ok) { flash(j.error || 'Hub error', true); return }
+          hunt.on = j.hunt.on; hunt.targets = j.hunt.targets; hunt.won = j.hunt.won;
+        } catch (e) { flash('Hub unreachable', true); return }
+        hunt.connected.forEach(c => c.g = false); saveHunt(); renderHunt(); syncHuntUi();
+        flash(hunt.on ? 'Hunt on — answer the 20s questions on the Hunt Hub page' : 'Hunt off — scanning just connects builders');
+        return
+      }
+      hunt.on = !hunt.on;
+      freshTargets(hunt);
+      hunt.won = [];
+      hunt.connected.forEach(c => c.g = false);
+      saveHunt(); renderHunt(); syncHuntUi();
+      if (!hunt.on) { stopScan(); closeQuiz(); setScanMode('qr'); flash('Hunt off — scanning just connects builders') }
+      else flash('Hunt on — scan a builder to earn your 3 trinkets')
+    };
+    $('#hreset').onclick = async () => {
+      if (CFG.hub) {
+        try {
+          const j = await (await postHub('/api/hunt/start', { token: hubTok })).json();
+          if (!j.ok) { flash(j.error || 'Hub error', true); return }
+          hunt.on = j.hunt.on; hunt.targets = j.hunt.targets; hunt.won = j.hunt.won;
+        } catch (e) { flash('Hub unreachable', true); return }
+        hunt.connected.forEach(c => c.g = false);
+        saveHunt(); renderHunt(); syncHuntUi(); closeQuiz(); flash('Hunt reset via hub — new trinkets, progress cleared');
+        return
+      }
+      freshTargets(hunt); hunt.won = []; hunt.connected.forEach(c => c.g = false);
+      saveHunt(); renderHunt(); closeQuiz(); flash('Hunt reset — new trinkets, progress cleared')
+    };
+    /* ---------- optional hunt hub sync ---------- */
+    let hubTok = '', hubCur = 0;
+    const hubApi = (path, opts) => fetch((CFG.hub || '').replace(/\/+$/, '') + path, opts);
+    const hubApply = j => {
+      if (!j.ok) { if (/bad token/i.test(j.error || '')) { hubTok = ''; localStorage.removeItem('bbHub.tok') } return false }
+      const h = j.hunt;
+      if (hunt.on != h.on || JSON.stringify(hunt.targets) != JSON.stringify(h.targets) || JSON.stringify(hunt.won) != JSON.stringify(h.won)) {
+        hunt.on = !!h.on; hunt.targets = h.targets; hunt.won = h.won;
+        saveHunt(); renderHunt(); syncHuntUi();
+      }
+      return true
+    };
+    const hubTrinket = (owner, id) => {
+      if (!hunt.won.includes(id)) hunt.won.push(id);
+      const e = got.find(g => g.u == owner) || hunt.connected.find(c => c.u == owner);
+      if (e && !e.g) e.g = true;
+      saveHunt(); renderHunt();
+      const t = TRK.find(x => x.id == id);
+      note('Trinket earned' + (t ? ': ' + t.name : '') + ' with ' + (e && e.n || owner));
+    };
+    async function hubPoll() {
+      if (!hubTok) return;
+      try {
+        const j = await (await hubApi('/api/state?token=' + hubTok + '&cursor=' + hubCur)).json();
+        if (j && j.ok) {
+          hubApply(j);
+          for (const ev of (j.events || [])) {
+            hubCur = Math.max(hubCur, ev.id | 0);
+            if (ev.type == 'connect') connect(ev.owner, ev.name);
+            else if (ev.type == 'trinket') hubTrinket(ev.owner, ev.trinketId);
+            else if (ev.type == 'scanned') note('Your card was scanned by @' + (ev.by || '?'));
+          }
+          try { localStorage.setItem('bbHub.cursor', hubCur) } catch (e) { }
+        }
+      } catch (e) { }
+      setTimeout(hubPoll, 4000);
+    }
+    async function hubStart() {
+      try {
+        hubTok = localStorage.getItem('bbHub.tok') || '';
+        hubCur = +(localStorage.getItem('bbHub.cursor') || 0);
+        if (!hubTok) {
+          const j = await (await postHub('/api/register', { username: CFG.profile.username, name: CFG.profile.name })).json();
+          if (!j.ok) { $('#note').textContent += 'Hub register failed: ' + (j.error || '?') + '. '; return }
+          hubTok = j.token;
+          try { localStorage.setItem('bbHub.tok', hubTok) } catch (e) { }
+        }
+        const j = await (await hubApi('/api/state?token=' + hubTok + '&cursor=' + hubCur)).json();
+        if (hubApply(j)) for (const ev of (j.events || [])) { hubCur = Math.max(hubCur, ev.id | 0); if (ev.type == 'connect') connect(ev.owner, ev.name) }
+      } catch (e) { $('#note').textContent += 'Hub unreachable — will keep retrying. ' }
+      if (hubTok && !hubPoll._r) hubPoll._r = setTimeout(hubPoll, 4000);
+    }
+    function flash(t, sticky) {
+      const m = $('#scanmsg'); m.textContent = t; m.style.display = 'block';
+      clearTimeout(flash._t); if (!sticky) flash._t = setTimeout(() => m.style.display = 'none', 2600)
+    }
+    let noteT = 0;
+    function note(t) {
+      const b = $('#notebar'); b.textContent = t; b.classList.add('show');
+      clearTimeout(noteT); noteT = setTimeout(() => b.classList.remove('show'), 2400)
+    }
+    let cdT = [], cdEl = null;
+    function bigCountdown(done) {
+      cdT.forEach(clearTimeout); cdT = [];
+      if (cdEl) cdEl.remove();
+      cdEl = document.createElement('div');
+      cdEl.className = 'bignum'; cdEl.setAttribute('aria-hidden', 'true');
+      document.body.appendChild(cdEl);
+      const steps = ['3', '2', '1'];
+      let i = 0;
+      const step = () => {
+        cdEl.textContent = steps[i];
+        if (!matchMedia('(prefers-reduced-motion:reduce)').matches) { cdEl.classList.remove('zoom'); void cdEl.offsetWidth; cdEl.classList.add('zoom') }
+        i++;
+        if (i < steps.length) cdT.push(setTimeout(step, 750));
+        else cdT.push(setTimeout(() => { if (cdEl) { cdEl.remove(); cdEl = null } done() }, 700))
+      };
+      step()
+    }
+    function cancelCountdown() { cdT.forEach(clearTimeout); cdT = []; if (cdEl) { cdEl.remove(); cdEl = null } }
+    /* camera */
+    let stream = null, rafId = 0, qtick = 0;
+    async function startScan() {
+      stopScan(); closeQuiz();
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { flash('Use your phone camera instead — using insecure origin.', true); return }
+      try { stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }) }
+      catch (e) { flash('Camera access denied — allow camera and try again.', true); return }
+      $('#cam').srcObject = stream;
+      const pv = $('#cam').play && $('#cam').play();
+      if (pv && pv.catch) pv.catch(() => { });
+      setScanMode('cam'); flash('Point the camera at a builder card');
+      let t0 = Date.now(), lastHint = Date.now();
+      const w = 560, h = 420, cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+      const ctx = cv.getContext('2d', { willReadFrequently: true });
+      const loop = () => {
+        if (!stream) return;
+        if ($('#cam').readyState >= 2) {
+          if (Date.now() - lastHint > 8000) { flash('Hold the QR steady — good lighting helps'); lastHint = Date.now() }
+          ctx.drawImage($('#cam'), 0, 0, w, h);
+          const d = ctx.getImageData(0, 0, w, h), r = typeof jsQR === 'function' && jsQR(d.data, w, h);
+          if (r && r.data && handlePayload(r.data)) return
+        }
+        rafId = requestAnimationFrame(loop)
+      };
+      loop()
+    }
+    function stopScan() {
+      if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null }
+      cancelAnimationFrame(rafId); $('#cam').srcObject = null;
+      if ($('#camwrap').classList.contains('open')) setScanMode('qr')
+    }
+    /* payload + connect */
+    function handlePayload(data) {
+      const d = (data || '').trim();
+      let u = null, n = '';
+      const m = /^BB1\|([^|]{1,32})\|([^|]{1,64})$/.exec(d);
+      if (m) { u = m[1]; n = m[2] }
+      else if (/^https?:\/\//i.test(d)) {
+        try {
+          const p = new URL(d, location.href), qu = p.searchParams.get('u');
+          if (qu) { u = qu.slice(0, 32); n = (p.searchParams.get('n') || '').slice(0, 64) }
+        } catch (e) { }
+      }
+      if (!u) { if (d !== handlePayload.last) { handlePayload.last = d; flash('Not a builder card — keep scanning') } return false }
+      stopScan();
+      connect(u, n);
+      return true
+    }
+    function connect(u, n) {
+      let e = hunt.connected.find(c => c.u == u);
+      const inGot = got.some(g => g.u == u);
+      if (!e && !inGot && got.length >= 20) { flash('Card grid full — 20 builders max.', true); return }
+      if (!e) { e = { u, n, g: false }; hunt.connected.push(e); saveHunt() }
+      if (!inGot) { got.push(e); coll(got.length - 1); note((e.n || e.u) + ' added to your connected builders') }
+      if (hunt.on && !e.g) {
+        if (CFG.hub) { note('Answer the question on the Hunt Hub to earn your trinket'); return }
+        showQuiz(e); return
+      }
+      if (e.g) { note('Trinket already taken with ' + (e.n || e.u) + ' — scan someone new'); return }
+      overlap(e.n || e.u)
+    }
+    /* quiz */
+    let qDeck = [], qz = null;
+    function drawQ() {
+      if (!qDeck.length) qDeck = shuffle(QUIZ.map((_, i) => i));
+      const Q = QUIZ[qDeck.pop()], rot = Math.random() * 4 | 0;
+      return { cat: Q.c, q: Q.q, opts: Q.o.map((_, k) => Q.o[(k + rot) % 4]), a: (Q.a - rot + 4) % 4 }
+    }
+    function showQuiz(e) {
+      const D = drawQ();
+      qz = { e, ...D, until: 0, live: false };
+      $('#qcat').textContent = D.cat + ' · beginner/intermediate';
+      $('#qwho').textContent = 'Scanned: ' + (e.n || e.u) + ' — answer within 20s to earn a trinket';
+      $('#qq').textContent = D.q;
+      $('#qopts').innerHTML = D.opts.map((o, i) => `<button data-i="${i}">${o}</button>`).join('');
+      setScanMode('quiz'); $('#qrc').classList.add('hunt');
+      $('#qtime').textContent = '20'; $('#qfill').style.width = '100%'; $('#qbar').classList.remove('low');
+      clearInterval(qtick);
+      bigCountdown(() => {
+        if (!qz) return;
+        qz.live = true; qz.until = Date.now() + 20000;
+        qtick = setInterval(() => {
+          const rem = qz.until - Date.now();
+          $('#qtime').textContent = Math.max(0, Math.ceil(rem / 1000));
+          $('#qfill').style.width = Math.max(0, rem / 200) + '%';
+          $('#qbar').classList.toggle('low', rem < 5000);
+          if (rem <= 0) { clearInterval(qtick); toast('Time up — trinket forfeited. Re-scan to try again.'); closeQuiz() }
+        }, 100)
+      })
+    }
+    $('#qopts').onclick = ev => {
+      const b = ev.target.closest('button'); if (!b || !qz || !qz.live) return;
+      clearInterval(qtick);
+      const i = +b.dataset.i, right = i === qz.a;
+      b.classList.add(right ? 'ok' : 'bad');[...$('#qopts').children].forEach(x => x.disabled = true);
+      if (right) { toast('Correct — a trinket is yours!'); award(qz.e) } else toast('Wrong answer — re-scan ' + (qz.e.n || qz.e.u) + ' to try again.');
+      setTimeout(closeQuiz, 1100)
+    };
+    function toast(t) { const w = $('#qwho'); w.textContent = t }
+    function closeQuiz() { clearInterval(qtick); cancelCountdown(); qz = null; setScanMode('qr') }
+    function award(e) {
+      const miss = hunt.targets.filter(id => !hunt.won.includes(id));
+      if (miss.length) {
+        const pick = miss[Math.random() * miss.length | 0];
+        hunt.won.push(pick);
+        e.g = true; saveHunt();
+      }
+      renderHunt(); coll();
+      if (hunt.won.length == 3) {
+        $('#on').textContent = 'Hunt complete';
+        $('#ov').innerHTML = hunt.targets.map(id => { const t = TRK.find(x => x.id == id); return `<div>✔ ${t.name}</div>` }).join('');
+        $('#ot').textContent = 'You won the scavenger hunt — see a mentor to claim your reward.';
+        $('#sh').classList.add('open')
+      }
+    }
+    $('#sc').onclick = () => { try { $('#qrc').scrollIntoView({ behavior: 'smooth', block: 'start' }) } catch (e) { } startScan() };
+    if (hunt.on) { $('#hbtn').classList.add('on'); $('#hbtn').setAttribute('aria-checked', 'true'); $('#hfoot').hidden = false; $('#qrc').classList.add('hunt') }
+    renderHunt()
+    $('#pf').onchange = e => { const f = e.target.files[0]; if (!f) return; const fr = new FileReader(); fr.onload = () => { photo = fr.result; hero($('#u').value.trim() || 'student', true) }; fr.readAsDataURL(f) };
+    let hideT, lastTap = 0;
+    const showCam = () => { const c = $('.cam'); c.classList.remove('off'); clearTimeout(hideT); hideT = setTimeout(() => c.classList.add('off'), 3500) };
+    $('.in').addEventListener('pointerup', () => { const n = Date.now(); if (n - lastTap < 350) showCam(); lastTap = n });
+    showCam();
+    const cols = [0, 1, 2, 3, 4, 5].map(c => [...$('#st').children].filter((e, i) => i % 6 == c && !e.classList.contains('g')));
+    let cs = 0;
+    const tick = () => {
+      const col = cols[cs++ % 6], lit = col.filter(e => e.classList.contains('on')), off = col.filter(e => !e.classList.contains('on')), pick = a => a[Math.random() * a.length | 0];
+      if (lit.length && (lit.length > 1 || Math.random() < .55)) pick(lit).classList.remove('on');
+      else if (off.length && Math.random() < .7) pick(off).classList.add('on')
+    };
+    if (!matchMedia('(prefers-reduced-motion:reduce)').matches) setTimeout(() => setInterval(tick, 380), 2500);
+    $('#cl').onclick = () => $('#sh').classList.remove('open');
+    $('#mq').onclick = () => { $('#sh').classList.remove('open'); $('#qrc').scrollIntoView({ behavior: 'smooth' }) };
+    const dlBtn = $('#dl-qr'); if (dlBtn) dlBtn.onclick = downloadQR;
+    const syncBtn = $('#btn-sync');
+    if (syncBtn) {
+      syncBtn.onclick = async () => {
+        syncBtn.disabled = true;
+        syncBtn.textContent = 'Syncing…';
+        await syncLiveActivity(true);
+        syncBtn.textContent = '↻ Sync live';
+        syncBtn.disabled = false;
+      };
+    }
+    let rfGen = 0;
+    function reflowWide() {
+      const gen = ++rfGen;
+      ord.forEach(id => { const e = $('#' + id); if (e) e.style.gridColumn = '' });
+      if (!matchMedia('(min-width:1200px)').matches) return;
+      requestAnimationFrame(() => {
+        if (gen != rfGen) return;
+        const vis = ord.map(id => $('#' + id)).filter(e => e && e.getBoundingClientRect().height > 0);
+        const tops = vis.map(s => Math.round(s.getBoundingClientRect().top / 8));
+        vis.forEach((s, i) => s.style.gridColumn = tops.indexOf(tops[i]) == tops.lastIndexOf(tops[i]) ? '1 / -1' : '')
+      })
+    }
+    addEventListener('resize', reflowWide);
+    const secs = $('#secs'); let ord = [...secs.children].map(e => e.id);
+    try { const sv = JSON.parse(localStorage.getItem('secOrder') || '[]'); if (sv.length == ord.length && ord.every(x => sv.includes(x))) ord = sv } catch (e) { }
+    const apply = () => ord.forEach((id, i) => { $('#' + id).style.order = i }), save = () => { try { localStorage.setItem('secOrder', JSON.stringify(ord)) } catch (e) { } };
+    const midY = el => { const r = el.getBoundingClientRect(); return r.top + r.height / 2 };
+    [...secs.children].forEach(s => {
+      const h = document.createElement('button'), hd = document.createElement('div'), t = s.querySelector('h2');
+      h.className = 'hl'; h.textContent = '⠿'; h.setAttribute('aria-label', 'Reorder section. Drag, or use the up and down arrow keys.');
+      hd.className = 'hd'; s.insertBefore(hd, t); hd.append(t, h);
+      let x0 = 0, y0 = 0, x = 0, y = 0, on = false;
+      const step = (cx, cy) => {
+        x = cx; y = cy; s.style.transform = `translate(${cx - x0}px,${cy - y0}px)`;
+        const r = s.getBoundingClientRect(), mx = r.left + r.width / 2, my = r.top + r.height / 2, ox = s.offsetLeft, oy = s.offsetTop;
+        const t = ord.map(id => $('#' + id)).find(e => { if (e === s) return false; const q = e.getBoundingClientRect(); return mx >= q.left && mx <= q.right && my >= q.top && my <= q.bottom });
+        if (t) { const i = ord.indexOf(s.id), j = ord.indexOf(t.id); ord.splice(i, 1); ord.splice(j, 0, s.id); apply(); x0 += s.offsetLeft - ox; y0 += s.offsetTop - oy; s.style.transform = `translate(${cx - x0}px,${cy - y0}px)` }
+      };
+      const loop = () => {
+        if (!on) return; const b = scrollY;
+        if (y < 90) scrollBy(0, -10); else if (y > innerHeight - 150) scrollBy(0, 10);
+        y0 -= scrollY - b; step(x, y); requestAnimationFrame(loop)
+      };
+      const end = () => { if (!on) return; on = false; s.classList.remove('drag'); s.style.transform = ''; save(); reflowWide() };
+      h.onpointerdown = e => { e.preventDefault(); h.setPointerCapture(e.pointerId); on = true; x0 = x = e.clientX; y0 = y = e.clientY; s.classList.add('drag'); requestAnimationFrame(loop) };
+      h.onpointermove = e => { if (on) { x = e.clientX; y = e.clientY } };
+      h.onpointerup = end; h.onpointercancel = end;
+      h.onkeydown = e => {
+        const i = ord.indexOf(s.id), j = i + (e.key == 'ArrowDown' ? 1 : e.key == 'ArrowUp' ? -1 : 0);
+        if (j != i && j >= 0 && j < ord.length) { e.preventDefault();[ord[i], ord[j]] = [ord[j], ord[i]]; apply(); save(); reflowWide(); h.focus() }
+      };
+    });
+    apply();
+    $('#ph').onerror = () => { photo = null; hero($('#u').value.trim() || 'student') };
+    async function autoLink() {
+      const sp = new URLSearchParams(location.search), u = (sp.get('u') || '').trim();
+      if (!u) return;
+      history.replaceState(null, '', location.pathname + location.hash);
+      if (!/^[\w.\-]{1,32}$/.test(u)) { note('Builder link ignored — invalid username'); return }
+      connect(u, (sp.get('n') || '').slice(0, 64));
+    }
+    boot().then(autoLink);
+  </script>
+</body>
+
+</html>

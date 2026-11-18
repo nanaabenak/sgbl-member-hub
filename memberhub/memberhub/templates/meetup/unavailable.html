@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Meetup link unavailable{% endblock %}
+{% block anon_content %}
+<div class="panel" style="margin-top:40px">
+  <div class="pixel-rule tight"></div>
+  <h1>Meetup link unavailable</h1>
+  <p class="mut">{% if session %}<b>{{ session.title }}</b> does not have a Meetup event URL yet.{% else %}This session does not exist.{% endif %}</p>
+  <a class="btn" href="{{ url_for('auth.login') }}">sign in</a>
+</div>
+{% endblock %}
+{% block content %}{% endblock %}

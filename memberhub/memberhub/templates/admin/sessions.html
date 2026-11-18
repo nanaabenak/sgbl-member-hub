@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% from "_macros.html" import chip %}
+{% block title %}Sessions{% endblock %}
+{% block content %}
+<div class="panel green">
+  <div class="pixel-rule"></div>
+  <h1>Sessions &amp; Meetup tracking</h1>
+  <p style="margin:0;opacity:.85">Create sessions, attach Meetup URLs and keep clicks, RSVPs and attendance separate.</p>
+</div>
+
+<details class="panel">
+  <summary style="cursor:pointer;font-size:12px">+ create a session</summary>
+  <form method="post" action="{{ url_for('admin.create_session') }}" style="margin-top:14px">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="form-grid">
+      <label class="field full">Title <input name="title" required maxlength="160" placeholder="e.g. Session 3 — Serverless on AWS"></label>
+      <label class="field">Starts at <input type="datetime-local" name="starts_at" required></label>
+      <label class="field">Ends at <input type="datetime-local" name="ends_at"></label>
+      <label class="field">Location <input name="location" maxlength="160"></label>
+      <label class="field">Meetup event ID <input name="meetup_event_id" maxlength="80"></label>
+      <label class="field full">Meetup event URL <input type="url" name="meetup_url" maxlength="500" placeholder="https://www.meetup.com/…"></label>
+      <label class="field full">Description <textarea name="description" maxlength="2000"></textarea></label>
+    </div>
+    <div class="form-actions"><button class="primary" type="submit">create session ▸</button></div>
+  </form>
+</details>
+
+<div class="panel">
+  <div class="panel-head"><h2>All sessions</h2><small>{{ sessions|length }} total</small></div>
+  {% if sessions %}
+  <div class="table-wrap"><table>
+    <thead><tr><th>Session</th><th>When</th><th>Status</th><th class="num">Clicks</th><th class="num">RSVPs</th><th class="num">Attended</th><th>Meetup</th></tr></thead>
+    <tbody>
+      {% for s in sessions %}
+      <tr>
+        <td><a href="{{ url_for('admin.session_detail', session_id=s.id) }}"><b>{{ s.title }}</b></a></td>
+        <td>{{ s.starts_at|dt('%d %b %Y, %H:%M') }}</td>
+        <td>{{ chip(s.status) }}</td>
+        <td class="num">{{ s.clicks }}</td>
+        <td class="num">{{ s.rsvps }}</td>
+        <td class="num">{{ s.attended }}</td>
+        <td>{{ 'attached' if s.meetup_url else 'missing' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table></div>
+  {% else %}<div class="empty">No sessions yet. Create the first one above.</div>{% endif %}
+</div>
+{% endblock %}
+{% block anon_content %}{% endblock %}

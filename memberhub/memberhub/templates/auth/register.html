@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Join the club{% endblock %}
+{% block anon_content %}
+<div class="auth-wrap" style="place-items:start center">
+  <div class="auth-card" style="width:min(100%,520px)">
+    <div class="panel green">
+      <div class="pixel-rule"></div>
+      <h1>Join the builder group.</h1>
+      <p style="margin:0;opacity:.85">An administrator activates each membership after review.</p>
+    </div>
+    <form method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="form-grid">
+        <label class="field full">Full name
+          <input name="full_name" required maxlength="120" value="{{ values.full_name }}">
+        </label>
+        <label class="field">Username
+          <input name="username" required maxlength="32" pattern="[A-Za-z0-9._-]{3,32}" value="{{ values.username }}">
+        </label>
+        <label class="field">Email
+          <input type="email" name="email" required maxlength="254" value="{{ values.email }}">
+        </label>
+        <label class="field">Student ID <small>(optional)</small>
+          <input name="student_id" maxlength="40" value="{{ values.student_id }}">
+        </label>
+        <label class="field">Location <small>(optional)</small>
+          <input name="location" maxlength="80" value="{{ values.location }}">
+        </label>
+        <label class="field">Password
+          <input type="password" name="password" required minlength="10" autocomplete="new-password">
+          <small>10+ characters, letters and numbers</small>
+        </label>
+        <label class="field">Confirm password
+          <input type="password" name="confirm" required minlength="10" autocomplete="new-password">
+        </label>
+      </div>
+      <label class="check"><input type="checkbox" name="terms" value="1" required> I confirm these details are accurate.</label>
+      <button class="primary" type="submit">create account ▸</button>
+    </form>
+    <div class="auth-foot">Already a member? <a href="{{ url_for('auth.login') }}">sign in</a></div>
+  </div>
+</div>
+{% endblock %}
+{% block content %}{% endblock %}

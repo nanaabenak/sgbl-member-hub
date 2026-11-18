@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% from "_macros.html" import chip %}
+{% block title %}{{ session.title }}{% endblock %}
+{% block content %}
+<div class="panel green">
+  <div class="pixel-rule"></div>
+  <h1 style="margin-bottom:4px">{{ session.title }}</h1>
+  <p style="margin:0;opacity:.85">{{ session.starts_at|dt('%A %d %B %Y, %H:%M') }}{% if session.ends_at %} – {{ session.ends_at|dt('%H:%M') }}{% endif %} · {{ session.location or 'location TBC' }}</p>
+</div>
+
+<div class="stats compact">
+  <div class="stat"><b>{{ chip('verified' if rsvp else 'not verified') }}</b><span>my RSVP verification</span></div>
+  <div class="stat"><b>{{ chip(attendance.status if attendance else 'not recorded') }}</b><span>my attendance</span></div>
+  <div class="stat"><b>{{ clicks|length }}</b><span>my recorded clicks</span></div>
+</div>
+
+{% if session.description %}<div class="panel"><h2>Session details</h2><p style="white-space:pre-line">{{ session.description }}</p></div>{% endif %}
+
+<div class="panel">
+  <div class="panel-head"><h2>Meetup links</h2><small>clicks are never counted as RSVPs or attendance</small></div>
+  <div class="linkbox">
+    <code>{{ url_for('meetup.aggregate_redirect', session_id=session.id, _external=True) }}</code>
+    <a class="btn sm primary" href="{{ url_for('meetup.aggregate_redirect', session_id=session.id) }}" target="_blank" rel="noopener noreferrer">open ↗</a>
+  </div>
+  {% if member_link %}
+    <p class="panel-note">Your member-specific link identifies your clicks in the reports:</p>
+    <div class="linkbox">
+      <code>{{ url_for('meetup.member_redirect', session_id=session.id, token=member_link.token, _external=True) }}</code>
+      <button class="btn sm" type="button" data-copy="{{ url_for('meetup.member_redirect', session_id=session.id, token=member_link.token, _external=True) }}">copy</button>
+    </div>
+  {% endif %}
+  {% if session.meetup_url %}<p class="panel-note">Direct event page: <a href="{{ session.meetup_url }}" target="_blank" rel="noopener noreferrer">{{ session.meetup_url }} ↗</a></p>{% endif %}
+</div>
+
+<div class="g2 grid">
+  <div class="panel">
+    <h2>RSVP &amp; attendance status</h2>
+    <dl class="kv">
+      <dt>RSVP verified</dt><dd>{{ rsvp.verified_at|dt if rsvp else 'Not yet verified by an administrator' }}</dd>
+      <dt>RSVP source</dt><dd>{{ rsvp.source if rsvp else '—' }}</dd>
+      <dt>Attendance</dt><dd>{{ chip(attendance.status if attendance else 'not recorded') }}</dd>
+      <dt>Recorded at</dt><dd>{{ attendance.checked_in_at|dt if attendance and attendance.checked_in_at else '—' }}</dd>
+    </dl>
+    <p class="panel-note">Meetup-reported RSVP count: <b>{{ session.meetup_rsvp_count }}</b> (aggregate figure reported by an administrator, not derived from clicks).</p>
+  </div>
+  <div class="panel">
+    <h2>My click history</h2>
+    {% if clicks %}
+      <div class="table-wrap"><table><thead><tr><th>When</th><th>Identified as</th></tr></thead><tbody>
+      {% for c in clicks %}<tr><td>{{ c.clicked_at|dt }}</td><td>{{ c.identified_by|replace('_',' ') }}</td></tr>{% endfor %}
+      </tbody></table></div>
+    {% else %}<div class="empty">No tracked-link clicks recorded for you yet.</div>{% endif %}
+  </div>
+</div>
+{% endblock %}
+{% block anon_content %}{% endblock %}

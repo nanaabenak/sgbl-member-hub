@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{% block title %}Member Hub{% endblock %} · {{ club_name }}</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+  <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="{{ url_for('member.dashboard') if current_user else url_for('auth.login') }}">
+        <svg viewBox="0 0 40 34" fill="none" role="img" aria-label="AWS">
+          <text x="0" y="17" fill="currentColor" font-family="Arial,sans-serif" font-weight="700" font-size="20">aws</text>
+          <path d="M2 24 Q18 32 34 23" stroke="#ff9900" stroke-width="2.2" stroke-linecap="round" />
+          <path d="M30 22.5 L34.5 22.8 L33.2 27" stroke="#ff9900" stroke-width="2" stroke-linecap="round" />
+        </svg>
+        <span><b>Member Hub</b><small>student builder group</small></span>
+      </a>
+      <nav class="topnav" aria-label="Primary">
+        {% if current_user %}
+          {% if is_admin %}
+            <a href="{{ url_for('admin.dashboard') }}" class="{{ 'on' if request.endpoint and request.endpoint.startswith('admin.') else '' }}">admin</a>
+          {% endif %}
+          <a href="{{ url_for('member.dashboard') }}" class="{{ 'on' if request.endpoint and request.endpoint.startswith('member.') else '' }}">portal</a>
+          <a href="{{ card_url }}" target="_blank" rel="noopener noreferrer">builder card ↗</a>
+        {% else %}
+          <a href="{{ url_for('auth.login') }}">sign in</a>
+          <a href="{{ url_for('auth.register') }}">join the club</a>
+        {% endif %}
+      </nav>
+      {% if current_user %}
+        <div class="userbox">
+          <span class="who"><b>{{ current_user.username }}</b><small>{{ 'admin' if is_admin else 'member' }}</small></span>
+          <button class="icon-btn" type="button" data-theme-toggle aria-label="Toggle colour theme">◐ dark</button>
+          <form method="post" action="{{ url_for('auth.logout') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn ghost sm" type="submit">log out</button>
+          </form>
+        </div>
+      {% endif %}
+    </div>
+  </header>
+
+  {% if current_user %}
+  <div class="shell">
+    <div class="layout">
+      <aside class="side" aria-label="Section navigation">
+        {% if is_admin %}
+          <div class="side-title">ADMINISTRATION</div>
+          <a href="{{ url_for('admin.dashboard') }}" class="{{ 'on' if request.endpoint == 'admin.dashboard' else '' }}">overview <span>▸</span></a>
+          <a href="{{ url_for('admin.members') }}" class="{{ 'on' if request.endpoint in ['admin.members','admin.member_detail'] else '' }}">members <span>▸</span></a>
+          <a href="{{ url_for('admin.sessions') }}" class="{{ 'on' if request.endpoint in ['admin.sessions','admin.session_detail'] else '' }}">sessions <span>▸</span></a>
+          <a href="{{ url_for('admin.tasks') }}" class="{{ 'on' if request.endpoint in ['admin.tasks','admin.task_detail'] else '' }}">tasks <span>▸</span></a>
+          <a href="{{ url_for('admin.verifications') }}" class="{{ 'on' if (request.endpoint or '').startswith('admin.verification') else '' }}">verification <span>▸</span></a>
+          <a href="{{ url_for('admin.reports') }}" class="{{ 'on' if (request.endpoint or '').startswith('admin.report') else '' }}">reports <span>▸</span></a>
+          <a href="{{ url_for('admin.audit_log') }}" class="{{ 'on' if request.endpoint == 'admin.audit_log' else '' }}">audit log <span>▸</span></a>
+        {% else %}
+          <div class="side-title">MY HUB</div>
+          <a href="{{ url_for('member.dashboard') }}" class="{{ 'on' if request.endpoint == 'member.dashboard' else '' }}">overview <span>▸</span></a>
+          <a href="{{ url_for('member.profile') }}" class="{{ 'on' if request.endpoint == 'member.profile' else '' }}">profile <span>▸</span></a>
+          <a href="{{ url_for('member.sessions') }}" class="{{ 'on' if (request.endpoint or '').startswith('member.session') else '' }}">sessions <span>▸</span></a>
+          <a href="{{ url_for('member.tasks') }}" class="{{ 'on' if (request.endpoint or '').startswith('member.task') else '' }}">my tasks <span>▸</span></a>
+          <a href="{{ url_for('member.learning') }}" class="{{ 'on' if request.endpoint == 'member.learning' else '' }}">learning <span>▸</span></a>
+        {% endif %}
+      </aside>
+      <main class="content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="flash-stack">
+              {% for category, message in messages %}<div class="flash {{ category }}" role="status">{{ message }}</div>{% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+  </div>
+  {% else %}
+    <div class="shell" style="max-width:520px">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="flash-stack">
+            {% for category, message in messages %}<div class="flash {{ category }}" role="status">{{ message }}</div>{% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+      {% block anon_content %}{% endblock %}
+    </div>
+  {% endif %}
+
+  <footer class="footer">
+    <span>AWS Student Builder Group · Member Hub</span>
+    <span><a href="{{ card_url }}" target="_blank" rel="noopener noreferrer">builder card ↗</a> · built for the club</span>
+  </footer>
+</body>
+</html>

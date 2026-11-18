@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% from "_macros.html" import chip %}
+{% block title %}Tasks{% endblock %}
+{% block content %}
+<div class="panel green">
+  <div class="pixel-rule"></div>
+  <h1>Task management</h1>
+  <p style="margin:0;opacity:.85">Publish work, assign it, review evidence and close tasks when done.</p>
+</div>
+
+<details class="panel">
+  <summary style="cursor:pointer;font-size:12px">+ create a task</summary>
+  <form method="post" action="{{ url_for('admin.create_task') }}" style="margin-top:14px">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="form-grid">
+      <label class="field full">Title <input name="title" required maxlength="160"></label>
+      <label class="field">Deadline <input type="datetime-local" name="due_at"></label>
+      <label class="field">Visibility <select name="scope"><option value="all">all members</option><option value="selected">selected members</option></select></label>
+      <label class="field full">Description <textarea name="description" maxlength="2000"></textarea></label>
+      <label class="field full">Instructions <textarea name="instructions" maxlength="3000" placeholder="Step-by-step guidance for members"></textarea></label>
+    </div>
+    <div class="form-actions"><button class="primary" type="submit">create draft ▸</button></div>
+  </form>
+</details>
+
+<div class="panel">
+  <div class="panel-head"><h2>All tasks</h2><small>{{ tasks|length }} total</small></div>
+  {% if tasks %}
+  <div class="table-wrap"><table>
+    <thead><tr><th>Task</th><th>Status</th><th>Deadline</th><th class="num">Assigned</th><th class="num">Awaiting review</th><th class="num">Approved</th></tr></thead>
+    <tbody>
+      {% for t in tasks %}
+      <tr>
+        <td><a href="{{ url_for('admin.task_detail', task_id=t.id) }}"><b>{{ t.title }}</b></a><span class="sub">{{ t.creator_name or '—' }} · {{ t.scope }}</span></td>
+        <td>{{ chip(t.status) }}</td>
+        <td>{{ t.due_at|dt('%d %b, %H:%M') if t.due_at else '—' }}</td>
+        <td class="num">{{ t.assigned_count }}</td>
+        <td class="num">{{ t.awaiting }}</td>
+        <td class="num">{{ t.approved }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table></div>
+  {% else %}<div class="empty">No tasks created yet.</div>{% endif %}
+</div>
+{% endblock %}
+{% block anon_content %}{% endblock %}

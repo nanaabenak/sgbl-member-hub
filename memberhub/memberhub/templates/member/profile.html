@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% from "_macros.html" import chip %}
+{% block title %}My profile{% endblock %}
+{% block content %}
+<div class="panel green">
+  <div class="pixel-rule"></div>
+  <h1 style="margin-bottom:4px">{{ profile.full_name }}</h1>
+  <p style="margin:0;opacity:.85">@{{ profile.username }} · {{ profile.email }}</p>
+  <div style="margin-top:10px">
+    {{ chip(profile.membership_status) }}
+    {% if profile.verified_at %}<span class="chip">verified {{ profile.verified_at|dt('%d %b %Y') }}</span>{% endif %}
+    <a class="chip" style="color:var(--gt);border-color:var(--gt)" href="{{ profile.builder_card_url or card_url }}" target="_blank" rel="noopener noreferrer">builder card ↗</a>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel-head"><h2>Edit personal details</h2><small>Only what the club needs to administer membership.</small></div>
+  <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="form-grid">
+      <label class="field">Full name <input name="full_name" required maxlength="120" value="{{ profile.full_name }}"></label>
+      <label class="field">Student ID <input name="student_id" maxlength="40" value="{{ profile.student_id }}"></label>
+      <label class="field">Phone <input name="phone" maxlength="40" value="{{ profile.phone }}"></label>
+      <label class="field">Location <input name="location" maxlength="80" value="{{ profile.location }}"></label>
+      <label class="field full">Programme <input name="program" maxlength="120" value="{{ profile.program }}"></label>
+      <label class="field full">Short bio <textarea name="bio" maxlength="600">{{ profile.bio }}</textarea></label>
+      <label class="field">GitHub username <input name="github_username" maxlength="40" value="{{ profile.github_username }}"></label>
+      <label class="field">AWS Builder ID <input name="builder_id" maxlength="120" value="{{ profile.builder_id }}"></label>
+      <label class="field">Builder Card URL <input name="builder_card_url" type="url" placeholder="https://…" value="{{ profile.builder_card_url }}"></label>
+      <label class="field">AWS Builder Center URL <input name="builder_center_url" type="url" placeholder="https://builder.aws.com/…" value="{{ profile.builder_center_url }}"></label>
+    </div>
+    <div class="form-actions"><button class="primary" type="submit">save profile</button></div>
+  </form>
+</div>
+
+<div class="panel">
+  <div class="panel-head"><h2>Verification statuses</h2><a class="btn ghost sm" href="{{ url_for('member.learning') }}">manage submissions</a></div>
+  {% if verifications %}
+    <div class="table-wrap"><table>
+      <thead><tr><th>Type</th><th>Status</th><th>Submitted</th><th>Reviewed</th><th>Reviewer note</th></tr></thead>
+      <tbody>
+        {% for v in verifications %}
+        <tr>
+          <td>{{ v.kind|replace('_',' ') }}</td><td>{{ chip(v.status) }}</td>
+          <td>{{ v.submitted_at|dt }}</td><td>{{ v.reviewed_at|dt if v.reviewed_at else '—' }}</td>
+          <td>{{ v.review_note or '—' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table></div>
+  {% else %}<div class="empty">No submissions yet. Add your Builder Center profile under Learning &amp; achievements.</div>{% endif %}
+</div>
+{% endblock %}
+{% block anon_content %}{% endblock %}

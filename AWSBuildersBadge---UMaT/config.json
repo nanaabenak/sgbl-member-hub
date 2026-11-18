@@ -1,0 +1,32 @@
+{
+  "profile": {
+    "username": "nanaabenak",
+    "name": "Nana Abena Korkor Boakyewaa Kissi-Boateng",
+    "bio": "Backend builder. Serverless on AWS, a little too much Python.",
+    "location": "Accra",
+    "lookingFor": "a frontend designer",
+    "photo": "",
+    "topics": ["serverless", "ai"]
+  },
+  "github": "nanaabenak",
+  "languages": [["Python", 38], ["TypeScript", 27], ["Go", 15], ["HCL", 12], ["Other", 8]],
+  "badges": [
+    { "icon": "☁", "label": "AWS Cloud Practitioner", "status": "verified", "note": "via Credly" },
+    { "icon": "⌥", "label": "12 merged PRs", "status": "verified", "note": "via GitHub" },
+    { "icon": "◈", "label": "Serverless builder", "status": "verified", "note": "from repo topics" },
+    { "icon": "?", "label": "Open-source mentor", "status": "self", "note": "self-claimed" }
+  ],
+  "links": [
+    { "label": "GitHub", "url": "https://github.com/nanaabenak" },
+    { "label": "LinkedIn", "url": "https://www.linkedin.com/in/your-name" },
+    { "label": "Email", "url": "mailto:you@example.com" }
+  ],
+  "collected": 3,
+  "builders": [
+    { "username": "mia-k", "name": "Mia K", "languages": ["Python", "Go"], "topics": ["ai"], "lookingFor": "a hackathon team" },
+    { "username": "kofi-ml", "name": "Kofi Asante", "languages": ["Python"], "topics": ["ai", "data"], "lookingFor": "a mentor" },
+    { "username": "zainab-dev", "name": "Zainab D", "languages": ["TypeScript"], "topics": ["web", "serverless"], "lookingFor": "a backend dev" },
+    { "username": "lin-rust", "name": "Lin", "languages": ["Rust", "Go"], "topics": ["devops"], "lookingFor": "a frontend designer" }
+  ],
+  "hub" : "https://meant-leather-linked-promise.trycloudflare.com"
+}

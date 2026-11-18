@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% from "_macros.html" import chip, stair %}
+{% block title %}Overview{% endblock %}
+{% block content %}
+<div class="panel green">
+  <div class="pixel-rule"></div>
+  <div class="hero-row">
+    {{ stair() }}
+    <div>
+      <h1 style="margin-bottom:4px">Hey, {{ profile.full_name.split(' ')[0] }}.</h1>
+      <p style="margin:0;opacity:.85">AWS Student Builder Group · membership {{ profile.membership_status }}</p>
+      <div style="margin-top:10px">
+        <span class="chip" style="background:var(--gt);color:var(--ink);border-color:var(--gt)">@{{ current_user.username }}</span>
+        {{ chip(profile.membership_status) }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="stats">
+  <div class="stat"><b>{{ stats.upcoming }}</b><span>upcoming sessions</span></div>
+  <div class="stat"><b>{{ stats.my_tasks_open }}</b><span>open tasks</span></div>
+  <div class="stat"><b>{{ stats.attendance_pct }}%</b><span>session attendance</span></div>
+  <div class="stat"><b>{{ stats.verifications_pending }}</b><span>verifications pending</span></div>
+</div>
+
+<div class="g2 grid">
+  <section class="panel">
+    <div class="panel-head"><h2>Upcoming &amp; recent sessions</h2><a class="btn ghost sm" href="{{ url_for('member.sessions') }}">all sessions</a></div>
+    {% if sessions %}
+      {% for s in sessions %}
+      <div style="padding:10px 0;border-bottom:1px solid var(--line)">
+        <div class="trow" style="display:flex;justify-content:space-between;gap:8px">
+          <a href="{{ url_for('member.session_detail', session_id=s.id) }}"><b>{{ s.title }}</b></a>
+          <small>{{ s.starts_at|dt('%d %b, %H:%M') }}</small>
+        </div>
+        <div style="margin-top:5px">
+          {{ chip(s.attendance_status or 'not recorded') }}
+          {{ chip('verified' if s.rsvp_status else 'rsvp not verified') }}
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}<div class="empty">No sessions published yet.</div>{% endif %}
+  </section>
+
+  <section class="panel">
+    <div class="panel-head"><h2>My tasks</h2><a class="btn ghost sm" href="{{ url_for('member.tasks') }}">all tasks</a></div>
+    {% if tasks %}
+      {% for t in tasks %}
+      <div style="padding:10px 0;border-bottom:1px solid var(--line)">
+        <div style="display:flex;justify-content:space-between;gap:8px">
+          <a href="{{ url_for('member.task_detail', task_id=t.id) }}"><b>{{ t.title }}</b></a>
+          <small>{{ t.due_at|dt('%d %b') if t.due_at else 'no deadline' }}</small>
+        </div>
+        <div style="margin-top:5px">{{ chip(t.submission_status) }}</div>
+      </div>
+      {% endfor %}
+    {% else %}<div class="empty">No tasks assigned yet.</div>{% endif %}
+  </section>
+</div>
+
+<div class="panel">
+  <div class="panel-head"><h2>Recent activity</h2><small class="live-dot">synced</small></div>
+  {% if activity %}
+  <div class="trace">
+    {% for a in activity %}
+      <div>· <b>{{ a.title }}</b> <span class="mut">— {{ a.detail|replace('_',' ') }} · {{ a.at|dt }}</span></div>
+    {% endfor %}
+  </div>
+  {% else %}<div class="empty">Your activity will appear here as you participate.</div>{% endif %}
+</div>
+{% endblock %}
+{% block anon_content %}{% endblock %}

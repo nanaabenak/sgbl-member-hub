@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+{% block content %}
+<div class="panel green">
+  <div class="pixel-rule"></div>
+  <h1>Reports &amp; CSV export</h1>
+  <p style="margin:0;opacity:.85">Each export keeps Meetup clicks, RSVPs and attendance as separate columns.</p>
+</div>
+
+<div class="grid g2">
+  {% for name, title, desc in [
+    ('members','Member engagement','Membership status, attendance, verified RSVPs, clicks, completed tasks and approvals.'),
+    ('attendance','Session attendance','Per-session attendance counts and percentage, alongside reported RSVPs.'),
+    ('meetup','Meetup engagement','Total and unique clicks, identified member clicks, aggregate RSVP counts and real attendance.'),
+    ('tasks','Task completion','Assignment counts and submission outcomes for every task.'),
+    ('verifications','Learning verification','All Builder Center, Skill Builder and achievement decisions with reviewer details.')
+  ] %}
+  <div class="panel">
+    <h2>{{ title }}</h2>
+    <p class="mut">{{ desc }}</p>
+    <a class="btn primary sm" href="{{ url_for('admin.export_csv', name=name) }}">download CSV ▾</a>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
+{% block anon_content %}{% endblock %}

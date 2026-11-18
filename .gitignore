@@ -1,0 +1,20 @@
+# Secrets and local state - never publish these
+**/.env
+**/.venv/
+**/venv/
+**/backups/
+**/*.dump
+
+# Python
+**/__pycache__/
+**/*.py[cod]
+
+# Throwaway databases
+*.db
+*_test
+
+# Do not publish the original project's nested git history
+AWSBuildersBadge---UMaT/.git/
+
+# Editor / OS files
+.DS_Store

@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% from "_macros.html" import chip %}
+{% block title %}Learning &amp; achievements{% endblock %}
+{% block content %}
+<div class="panel green">
+  <div class="pixel-rule"></div>
+  <h1>AWS learning &amp; achievements</h1>
+  <p style="margin:0;opacity:.85">Submit links to your own profiles and evidence. Administrators verify each submission manually — no automatic account access is assumed.</p>
+</div>
+
+<div class="panel">
+  <div class="panel-head"><h2>Your submissions</h2><small>{{ submissions|length }} total</small></div>
+  {% if submissions %}
+  <div class="table-wrap"><table>
+    <thead><tr><th>Type</th><th>Title</th><th>Status</th><th>Submitted</th><th>Decision</th></tr></thead>
+    <tbody>
+      {% for s in submissions %}
+      <tr>
+        <td>{{ s.kind|replace('_',' ') }}</td>
+        <td>{% if s.link %}<a href="{{ s.link }}" target="_blank" rel="noopener noreferrer">{{ s.title }} ↗</a>{% else %}{{ s.title }}{% endif %}</td>
+        <td>{{ chip(s.status) }}</td>
+        <td>{{ s.submitted_at|dt }}</td>
+        <td>{{ s.review_note or ('approved ' ~ s.reviewed_at|dt('%d %b') if s.reviewed_at else 'awaiting review') }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table></div>
+  {% else %}<div class="empty">No submissions yet. Use the forms below to add your evidence.</div>{% endif %}
+</div>
+
+<div class="g2 grid">
+  <div class="panel">
+    <h2>AWS Builder Center</h2>
+    <form method="post" action="{{ url_for('member.submit_builder_center') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="form-grid">
+        <label class="field full">Profile URL <input type="url" name="profile_url" required maxlength="500" value="{{ profile.builder_center_url }}" placeholder="https://builder.aws.com/…"></label>
+        <label class="field">AWS Builder ID <input name="builder_id" maxlength="120" value="{{ profile.builder_id }}"></label>
+        <label class="field">Display name <input name="display_name" maxlength="120" value="{{ profile.full_name }}"></label>
+        <label class="field full">Extra evidence URL <small>(optional)</small> <input type="url" name="evidence_url" maxlength="500"></label>
+        <label class="field full">Notes <textarea name="notes" maxlength="1000"></textarea></label>
+      </div>
+      <div class="form-actions"><button class="primary" type="submit">submit profile ▸</button></div>
+    </form>
+  </div>
+
+  <div class="panel">
+    <h2>AWS Skill Builder</h2>
+    <form method="post" action="{{ url_for('member.submit_skill_builder') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="form-grid">
+        <label class="field full">Course name <input name="course_name" required maxlength="160" placeholder="e.g. AWS Cloud Practitioner Essentials"></label>
+        <label class="field">Completion URL <input type="url" name="completion_url" maxlength="500"></label>
+        <label class="field">Evidence URL <input type="url" name="evidence_url" maxlength="500"></label>
+        <label class="field">Hours <input name="hours" maxlength="10" placeholder="e.g. 6.5"></label>
+        <label class="field">Notes <input name="notes" maxlength="1000"></label>
+      </div>
+      <div class="form-actions"><button class="primary" type="submit">submit learning ▸</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="panel">
+  <h2>Certification or badge</h2>
+  <form method="post" action="{{ url_for('member.submit_achievement') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="form-grid">
+      <label class="field">Category
+        <select name="category"><option value="certification">certification</option><option value="badge">badge</option></select>
+      </label>
+      <label class="field">Title <input name="title" required maxlength="160" placeholder="e.g. AWS Certified Cloud Practitioner"></label>
+      <label class="field">Issuer <input name="issuer" maxlength="120" placeholder="AWS / Credly"></label>
+      <label class="field">Date earned <input type="date" name="earned_at"></label>
+      <label class="field full">Evidence URL <input type="url" name="evidence_url" required maxlength="500" placeholder="Credly badge or certificate link"></label>
+      <label class="field full">Notes <textarea name="notes" maxlength="1000"></textarea></label>
+    </div>
+    <div class="form-actions"><button class="primary" type="submit">submit achievement ▸</button></div>
+  </form>
+</div>
+
+<div class="panel">
+  <div class="panel-head"><h2>Verification decisions</h2><small>newest first</small></div>
+  {% if decisions %}
+  <div class="trace">
+    {% for d in decisions %}
+      <div>· <b>{{ d.subject_type|replace('_',' ') }}</b> — {{ chip(d.status) }} {{ 'by ' ~ d.reviewer_name if d.reviewer_name else '' }} · {{ d.created_at|dt }}{% if d.notes %}<span class="mut"> · {{ d.notes }}</span>{% endif %}</div>
+    {% endfor %}
+  </div>
+  {% else %}<div class="empty">No verification decisions yet.</div>{% endif %}
+</div>
+{% endblock %}
+{% block anon_content %}{% endblock %}

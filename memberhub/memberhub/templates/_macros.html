@@ -1,0 +1,25 @@
+{% macro chip(status) %}
+  {%- set label = (status or '—')|replace('_', ' ') -%}
+  {%- if status in ['approved', 'verified', 'active', 'present', 'published', 'completed'] -%}
+    <span class="chip g">{{ label }}</span>
+  {%- elif status in ['pending', 'submitted', 'in_progress', 'scheduled', 'corrections_requested'] -%}
+    <span class="chip warn">{{ label }}</span>
+  {%- elif status in ['rejected', 'bad', 'cancelled', 'suspended', 'inactive'] -%}
+    <span class="chip bad">{{ label }}</span>
+  {%- else -%}
+    <span class="chip dim">{{ label }}</span>
+  {%- endif -%}
+{% endmacro %}
+
+{% macro stair() %}
+<div class="stair" aria-hidden="true">
+  {% set pat = '.....G' ~ '....GG' ~ '...G..' ~ '.G....' ~ 'G...G.' ~ '....BG' ~ '..G...' ~ 'G.....' %}
+  {% for ch in pat %}
+    {% set i = loop.index0 %}
+    {% set delay = ((i % 6) + (i // 6)) * 60 %}
+    {% set cls = 'g b' if ch == 'B' else ('g' if ch == 'G' else '') %}
+    {% set extra = ', ' ~ (delay + 1400) ~ 'ms' if ch == 'B' else '' %}
+    <i class="{{ cls }}" style="animation-delay:{{ delay }}ms{{ extra }}"></i>
+  {% endfor %}
+</div>
+{% endmacro %}

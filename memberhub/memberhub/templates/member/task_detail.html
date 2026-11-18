@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% from "_macros.html" import chip %}
+{% block title %}{{ task.title }}{% endblock %}
+{% block content %}
+<div class="panel green">
+  <div class="pixel-rule"></div>
+  <h1 style="margin-bottom:4px">{{ task.title }}</h1>
+  <p style="margin:0;opacity:.85">Deadline: {{ task.due_at|dt('%A %d %B %Y, %H:%M') if task.due_at else 'no fixed deadline' }}</p>
+  <div style="margin-top:10px">{{ chip(task.submission_status) }}</div>
+</div>
+
+{% if task.description %}<div class="panel"><h2>About this task</h2><p style="white-space:pre-line">{{ task.description }}</p></div>{% endif %}
+{% if task.instructions %}<div class="panel"><h2>Instructions</h2><p style="white-space:pre-line">{{ task.instructions }}</p></div>{% endif %}
+
+<div class="panel">
+  <div class="panel-head"><h2>Your work</h2>
+    {% if task.submitted_at %}<small>submitted {{ task.submitted_at|dt }}</small>{% endif %}
+  </div>
+  {% if task.submission_status == 'approved' %}
+    <div class="flash ok">This task was approved by {{ task.reviewer_name or 'an administrator' }} on {{ task.reviewed_at|dt }}.</div>
+  {% endif %}
+  {% if task.submission_status == 'corrections_requested' %}
+    <div class="flash warn">Corrections requested: {{ task.review_note }}</div>
+  {% elif task.submission_status == 'rejected' %}
+    <div class="flash bad">Not approved: {{ task.review_note }}</div>
+  {% endif %}
+
+  <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="form-grid">
+      <label class="field full">Completion notes <textarea name="note" maxlength="2000" placeholder="What did you build? What did you learn?">{{ task.note or '' }}</textarea></label>
+      <label class="field full">Evidence URL <input type="url" name="evidence_url" maxlength="500" placeholder="https://github.com/… or a screenshot link" value="{{ task.evidence_url or '' }}"></label>
+    </div>
+    <div class="form-actions">
+      <button type="submit" name="action" value="progress" class="ghost">mark in progress</button>
+      <button type="submit" name="action" value="submit" class="primary">submit evidence ▸</button>
+    </div>
+  </form>
+  <p class="panel-note">Admins approve, reject or request corrections. Resubmitting replaces your previous evidence.</p>
+</div>
+{% endblock %}
+{% block anon_content %}{% endblock %}

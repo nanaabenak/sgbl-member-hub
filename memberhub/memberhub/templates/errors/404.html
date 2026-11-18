@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Not found{% endblock %}
+{% block content %}
+<div class="panel">
+  <h1>404 · Nothing here</h1>
+  <p class="mut">That page, session or record could not be found.</p>
+  <a class="btn" href="{{ url_for('member.dashboard') if current_user else url_for('auth.login') }}">go back</a>
+</div>
+{% endblock %}
+{% block anon_content %}{% endblock %}

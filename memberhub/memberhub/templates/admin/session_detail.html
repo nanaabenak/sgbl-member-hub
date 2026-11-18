@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% from "_macros.html" import chip %}
+{% block title %}{{ club_session.title }}{% endblock %}
+{% block content %}
+<div class="panel green">
+  <div class="pixel-rule"></div>
+  <h1 style="margin-bottom:4px">{{ club_session.title }}</h1>
+  <p style="margin:0;opacity:.85">{{ club_session.starts_at|dt('%A %d %B %Y, %H:%M') }} · {{ club_session.location or 'location TBC' }} · {{ chip(club_session.status) }}</p>
+</div>
+
+<div class="stats">
+  <div class="stat"><b>{{ metrics.total_clicks }}</b><span>total recorded clicks</span></div>
+  <div class="stat"><b>{{ metrics.unique_clicks }}</b><span>unique clicks (IP hash)</span></div>
+  <div class="stat"><b>{{ metrics.identified_clicks }}</b><span>identified member clicks</span></div>
+  <div class="stat"><b>{{ metrics.anonymous_clicks }}</b><span>anonymous clicks</span></div>
+</div>
+<div class="stats compact">
+  <div class="stat"><b>{{ club_session.meetup_rsvp_count }}</b><span>Meetup-reported RSVPs (aggregate)</span></div>
+  <div class="stat"><b>{{ rsvps|length }}</b><span>individually verified RSVP records</span></div>
+  <div class="stat"><b>{{ attendance|selectattr('status','equalto','present')|list|length }}</b><span>actual attendance (present)</span></div>
+</div>
+<div class="panel"><p class="mut" style="margin:0">Clicks are not RSVPs and RSVPs are not attendance. Each metric is recorded and stored independently.</p></div>
+
+<div class="panel">
+  <div class="panel-head"><h2>Tracked links</h2><small>secret member links identify individual clicks</small></div>
+  <div class="linkbox">
+    <code>{{ base_url }}/meetup/{{ club_session.id }}</code>
+    <button class="btn sm" type="button" data-copy="{{ base_url }}/meetup/{{ club_session.id }}">copy</button>
+  </div>
+  {% for l in links if l.kind == 'member' %}
+    <div class="linkbox">
+      <code>{{ base_url }}/meetup/{{ club_session.id }}/u/{{ l.token }}</code>
+      <button class="btn sm" type="button" data-copy="{{ base_url }}/meetup/{{ club_session.id }}/u/{{ l.token }}">copy</button>
+      <span class="mut">{{ l.full_name or l.username }}</span>
+    </div>
+  {% endfor %}
+  <form method="post" style="margin-top:14px">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="action" value="member_link">
+    <div class="form-grid">
+      <label class="field">Generate a member-specific link
+        <select name="user_id" required><option value="">choose member…</option>
+        {% for m in members %}<option value="{{ m.id }}">{{ m.full_name }} (@{{ m.username }})</option>{% endfor %}
+        </select>
+      </label>
+      <label class="field" style="align-self:end"><button class="primary" type="submit">generate link ▸</button></label>
+    </div>
+  </form>
+</div>
+
+<div class="panel">
+  <div class="panel-head"><h2>Edit session</h2><small>meetup URL and reported RSVP count</small></div>
+  <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="action" value="update">
+    <div class="form-grid">
+      <label class="field full">Title <input name="title" value="{{ club_session.title }}" required maxlength="160"></label>
+      <label class="field">Starts at <input type="datetime-local" name="starts_at" required value="{{ club_session.starts_at.strftime('%Y-%m-%dT%H:%M') if club_session.starts_at }}"></label>
+      <label class="field">Ends at <input type="datetime-local" name="ends_at" value="{{ club_session.ends_at.strftime('%Y-%m-%dT%H:%M') if club_session.ends_at }}"></label>
+      <label class="field">Location <input name="location" value="{{ club_session.location }}" maxlength="160"></label>
+      <label class="field">Meetup event ID <input name="meetup_event_id" value="{{ club_session.meetup_event_id }}" maxlength="80"></label>
+      <label class="field full">Meetup event URL <input type="url" name="meetup_url" value="{{ club_session.meetup_url }}" maxlength="500"></label>
+      <label class="field">Reported RSVP count <input type="number" name="meetup_rsvp_count" min="0" value="{{ club_session.meetup_rsvp_count }}"></label>
+      <label class="field">Status <select name="status">{% for s in ['scheduled','completed','cancelled'] %}<option value="{{ s }}" {{ 'selected' if club_session.status == s }}>{{ s }}</option>{% endfor %}</select></label>
+      <label class="field full">Description <textarea name="description" maxlength="2000">{{ club_session.description }}</textarea></label>
+    </div>
+    <p class="panel-note">Reported RSVP count was last set {{ club_session.rsvp_count_reported_at|dt if club_session.rsvp_count_reported_at else 'never' }}.</p>
+    <div class="form-actions"><button class="primary" type="submit">save session</button></div>
+  </form>
+</div>
+
+<div class="g2 grid">
+  <div class="panel">
+    <h2>Record a verified RSVP</h2>
+    <form method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="action" value="rsvp">
+      <div class="form-grid">
+        <label class="field full">Member
+          <select name="user_id"><option value="">— not linked to a member account —</option>
+          {% for m in members %}<option value="{{ m.id }}">{{ m.full_name }} (@{{ m.username }})</option>{% endfor %}
+          </select>
+        </label>
+        <label class="field">Meetup member ID <small>(when no account is linked)</small> <input name="meetup_member_id" maxlength="80"></label>
+        <label class="field">Source <select name="source"><option value="manual">manual</option><option value="import">Meetup import</option></select></label>
+        <label class="field">Status <select name="status"><option value="verified">verified</option><option value="cancelled">cancelled</option></select></label>
+        <label class="field full">Notes <input name="notes" maxlength="300"></label>
+      </div>
+      <div class="form-actions"><button class="primary" type="submit">save RSVP ▸</button></div>
+    </form>
+    <h3 style="margin-top:18px">Verified RSVP records ({{ rsvps|length }})</h3>
+    {% if rsvps %}<div class="table-wrap"><table><thead><tr><th>Member</th><th>Status</th><th>Source</th><th>Verified</th></tr></thead><tbody>
+      {% for r in rsvps %}<tr><td>{{ r.full_name or r.meetup_member_id }}</td><td>{{ chip(r.status) }}</td><td>{{ r.source }}</td><td>{{ r.verified_at|dt('%d %b, %H:%M') }}</td></tr>{% endfor %}
+    </tbody></table></div>{% else %}<div class="empty">No individually verified RSVPs yet.</div>{% endif %}
+  </div>
+
+  <div class="panel">
+    <h2>Record actual attendance</h2>
+    <form method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="action" value="attendance">
+      <div style="max-height:260px;overflow:auto;border:1px solid var(--line);padding:8px">
+        {% for m in members %}
+        <label class="check" style="display:flex;width:100%">
+          <input type="checkbox" name="attendees" value="{{ m.id }}" {{ 'checked' if m.id in present_ids }}>
+          {{ m.full_name }} <small>(@{{ m.username }})</small>
+        </label>
+        {% endfor %}
+      </div>
+      <label class="check"><input type="checkbox" name="mark_others_absent" value="1"> mark everyone unchecked as absent</label>
+      <div class="form-actions"><button class="primary" type="submit">save attendance ▸</button></div>
+    </form>
+    <h3 style="margin-top:18px">Attendance records ({{ attendance|length }})</h3>
+    {% if attendance %}<div class="table-wrap"><table><thead><tr><th>Member</th><th>Status</th><th>Recorded</th></tr></thead><tbody>
+      {% for a in attendance %}<tr><td>{{ a.full_name }}</td><td>{{ chip(a.status) }}</td><td>{{ a.created_at|dt('%d %b, %H:%M') }}</td></tr>{% endfor %}
+    </tbody></table></div>{% else %}<div class="empty">No attendance recorded yet.</div>{% endif %}
+  </div>
+</div>
+{% endblock %}
+{% block anon_content %}{% endblock %}

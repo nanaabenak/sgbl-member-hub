@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% from "_macros.html" import chip %}
+{% block title %}Verification queue{% endblock %}
+{% block content %}
+<div class="panel green">
+  <div class="pixel-rule"></div>
+  <h1>Verification management</h1>
+  <p style="margin:0;opacity:.85">Review member-submitted Builder Center, Skill Builder and achievement evidence.</p>
+</div>
+
+<div class="panel">
+  <div class="panel-head"><h2>Review queue</h2><small>{{ rows|length }} shown</small></div>
+  <div class="tabs">
+    <a href="{{ url_for('admin.verifications') }}" class="{{ 'on' if not kind }}">all types</a>
+    {% for key, label in [('builder_center','builder center'),('skill_builder','skill builder'),('achievement','achievements')] %}
+      <a href="{{ url_for('admin.verifications', kind=key, status=status) }}" class="{{ 'on' if kind == key }}">{{ label }}</a>
+    {% endfor %}
+  </div>
+  <form class="filter-bar" method="get" style="margin-top:12px">
+    <input type="hidden" name="kind" value="{{ kind }}">
+    <label class="field">Status
+      <select name="status" data-autosubmit>
+        <option value="">all statuses</option>
+        {% for s in ['pending','approved','rejected','corrections_requested'] %}<option value="{{ s }}" {{ 'selected' if status == s }}>{{ s|replace('_',' ') }}</option>{% endfor %}
+      </select>
+    </label>
+    <button class="ghost" type="submit">filter</button>
+  </form>
+  <div class="table-wrap" style="margin-top:14px"><table>
+    <thead><tr><th>Member</th><th>Type</th><th>Item</th><th>Status</th><th>Submitted</th><th>Reviewer</th></tr></thead>
+    <tbody>
+      {% for r in rows %}
+      <tr>
+        <td>{{ r.full_name }}<span class="sub">@{{ r.username }}</span></td>
+        <td>{{ r.kind|replace('_',' ') }}</td>
+        <td><a href="{{ url_for('admin.verification_detail', kind=r.kind, submission_id=r.id) }}">{{ r.title or 'untitled' }} ▸</a></td>
+        <td>{{ chip(r.status) }}</td>
+        <td>{{ r.submitted_at|dt('%d %b, %H:%M') }}</td>
+        <td>{{ r.reviewer_name or '—' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table></div>
+  {% if not rows %}<div class="empty">Nothing matches this filter.</div>{% endif %}
+</div>
+{% endblock %}
+{% block anon_content %}{% endblock %}

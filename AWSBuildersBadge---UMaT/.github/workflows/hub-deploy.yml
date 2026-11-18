@@ -1,0 +1,37 @@
+name: Deploy Hunt Hub
+
+on:
+  push:
+    paths:
+      - 'hub/hunt_hub.py'
+      - 'hub/public/**'
+      - 'hub/start_hub.sh'
+      - 'hub/stop_hub.sh'
+      - 'hub/restart_hub.sh'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Start SSH agent and load deploy key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Verify host key
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts 2>/dev/null || true
+
+      - name: Sync hub to EC2 and restart
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT || '22' }}
+        run: |
+          rsync -avz -e "ssh -p $SSH_PORT -o StrictHostKeyChecking=accept-new" \
+            --exclude=__pycache__ --exclude=*.pyc --exclude=hunt_hub.db --exclude=hub.pid --exclude=hub.log \
+            hub/ "$SSH_USER@$SSH_HOST:~/hub/"
+          ssh -p "$SSH_PORT" -o StrictHostKeyChecking=accept-new "$SSH_USER@$SSH_HOST" 'cd ~/hub && ./restart_hub.sh'

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% from "_macros.html" import chip %}
+{% block title %}Sessions{% endblock %}
+{% block content %}
+<div class="panel green">
+  <div class="pixel-rule"></div>
+  <h1>Sessions &amp; attendance</h1>
+  <p style="margin:0;opacity:.85">Open the tracked link to reach Meetup. Clicks, RSVPs and attendance are recorded separately.</p>
+</div>
+<div class="panel">
+  <div class="panel-head"><h2>All club sessions</h2><small><span class="live-dot"></span>up to date</small></div>
+  {% if sessions %}
+  <div class="table-wrap"><table>
+    <thead><tr><th>Session</th><th>When</th><th>Meetup &amp; tracking</th><th>RSVP</th><th>Attendance</th><th class="num">My clicks</th></tr></thead>
+    <tbody>
+      {% for s in sessions %}
+      <tr>
+        <td><a href="{{ url_for('member.session_detail', session_id=s.id) }}"><b>{{ s.title }}</b></a><span class="sub">{{ s.location or 'location TBC' }}</span></td>
+        <td>{{ s.starts_at|dt('%d %b %Y, %H:%M') }}</td>
+        <td>
+          <a class="btn sm" href="{{ url_for('meetup.aggregate_redirect', session_id=s.id) }}" target="_blank" rel="noopener noreferrer">tracked link ↗</a>
+          {% if s.meetup_url %}<a class="btn ghost sm" href="{{ s.meetup_url }}" target="_blank" rel="noopener noreferrer">Meetup ↗</a>{% endif %}
+          {% if links[s.id] %}<span class="sub">personal link available</span>{% endif %}
+        </td>
+        <td>{{ chip('verified' if s.rsvp_status else 'not verified') }}</td>
+        <td>{{ chip(s.attendance_status or 'not recorded') }}</td>
+        <td class="num">{{ s.my_clicks }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table></div>
+  {% else %}<div class="empty">No sessions have been published yet.</div>{% endif %}
+</div>
+{% endblock %}
+{% block anon_content %}{% endblock %}

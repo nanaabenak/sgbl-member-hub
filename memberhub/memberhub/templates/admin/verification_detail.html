@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% from "_macros.html" import chip %}
+{% block title %}Review {{ label }}{% endblock %}
+{% block content %}
+<div class="panel green">
+  <div class="pixel-rule"></div>
+  <h1 style="margin-bottom:4px">{{ label }}</h1>
+  <p style="margin:0;opacity:.85">{{ submission.full_name }} (@{{ submission.username }}) · {{ submission.email }}</p>
+  <div style="margin-top:10px">{{ chip(submission.status) }}</div>
+</div>
+
+<div class="panel">
+  <div class="panel-head"><h2>Submitted information</h2><small>submitted {{ submission.submitted_at|dt }}</small></div>
+  <dl class="kv">
+    {% if kind == 'builder_center' %}
+      <dt>Profile URL</dt><dd><a href="{{ submission.profile_url }}" target="_blank" rel="noopener noreferrer">{{ submission.profile_url }} ↗</a></dd>
+      <dt>Builder ID</dt><dd>{{ submission.builder_id or '—' }}</dd>
+      <dt>Display name</dt><dd>{{ submission.display_name or '—' }}</dd>
+      <dt>Extra evidence</dt><dd>{% if submission.evidence_url %}<a href="{{ submission.evidence_url }}" target="_blank" rel="noopener noreferrer">open ↗</a>{% else %}—{% endif %}</dd>
+    {% elif kind == 'skill_builder' %}
+      <dt>Course</dt><dd>{{ submission.course_name }}</dd>
+      <dt>Completion URL</dt><dd>{% if submission.completion_url %}<a href="{{ submission.completion_url }}" target="_blank" rel="noopener noreferrer">{{ submission.completion_url }} ↗</a>{% else %}—{% endif %}</dd>
+      <dt>Evidence URL</dt><dd>{% if submission.evidence_url %}<a href="{{ submission.evidence_url }}" target="_blank" rel="noopener noreferrer">{{ submission.evidence_url }} ↗</a>{% else %}—{% endif %}</dd>
+      <dt>Hours</dt><dd>{{ submission.hours if submission.hours is not none else '—' }}</dd>
+    {% else %}
+      <dt>Category</dt><dd>{{ submission.category }}</dd>
+      <dt>Title</dt><dd>{{ submission.title }}</dd>
+      <dt>Issuer</dt><dd>{{ submission.issuer or '—' }}</dd>
+      <dt>Date earned</dt><dd>{{ submission.earned_at or '—' }}</dd>
+      <dt>Evidence URL</dt><dd><a href="{{ submission.evidence_url }}" target="_blank" rel="noopener noreferrer">{{ submission.evidence_url }} ↗</a></dd>
+    {% endif %}
+    <dt>Notes</dt><dd>{{ submission.notes or '—' }}</dd>
+    <dt>Last decision</dt><dd>{{ submission.reviewer_name or '—' }} · {{ submission.reviewed_at|dt if submission.reviewed_at else 'not reviewed' }}</dd>
+    <dt>Review note</dt><dd>{{ submission.review_note or '—' }}</dd>
+  </dl>
+</div>
+
+<div class="panel">
+  <h2>Record a verification decision</h2>
+  <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="form-grid">
+      <label class="field">Decision
+        <select name="decision"><option value="approved">approve</option><option value="rejected">reject</option><option value="corrections_requested">request corrections</option></select>
+      </label>
+      <label class="field">Note to member <input name="review_note" maxlength="1000" placeholder="Explain the decision or what to correct"></label>
+    </div>
+    <div class="form-actions"><button class="primary" type="submit">save decision ▸</button></div>
+  </form>
+  <p class="panel-note">Every decision is timestamped, attributed to you, and appended to the verification history below.</p>
+</div>
+
+<div class="panel">
+  <h2>Verification history</h2>
+  {% if history %}
+  <div class="table-wrap"><table><thead><tr><th>When</th><th>Status</th><th>Reviewer</th><th>Notes</th></tr></thead><tbody>
+    {% for h in history %}<tr><td>{{ h.created_at|dt }}</td><td>{{ chip(h.status) }}</td><td>{{ h.reviewer or 'submitted by member' }}</td><td>{{ h.notes or '—' }}</td></tr>{% endfor %}
+  </tbody></table></div>
+  {% else %}<div class="empty">No decisions recorded yet.</div>{% endif %}
+</div>
+{% endblock %}
+{% block anon_content %}{% endblock %}
