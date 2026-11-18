@@ -424,25 +424,9 @@ The User Data script installs PostgreSQL, clones the repo, creates the database 
 
 Because `SESSION_COOKIE_SECURE=false` and `BEHIND_HTTPS_PROXY=false` are set in this HTTP-only lab config, do **not** reuse those values for a real public deployment. Also treat the public repo as readable by anyone: never commit real credentials, member data or backups.
 
-If you only need the original Builder Card and want to avoid PostgreSQL entirely, deploy just the static folder with Nginx instead:
+If you only need the original Builder Card and want to avoid PostgreSQL entirely, paste `deploy/user_data_builder_card.sh` instead. It downloads the repo with `curl`, copies `AWSBuildersBadge---UMaT/` into nginx's document root, and starts nginx on port `80`. No Git clone, database, Python environment or systemd app service is required.
 
-```bash
-#!/bin/bash
-dnf -y install git nginx
-git clone --depth 1 https://github.com/YOUR-ORG/YOUR-REPO.git /opt/site
-mkdir -p /etc/nginx/conf.d
-cat > /etc/nginx/conf.d/default.conf <<'EOF'
-server {
-    listen 80;
-    root /opt/site/AWSBuildersBadge---UMaT;
-    index index.html;
-    location / { try_files $uri $uri/ =404; }
-}
-EOF
-systemctl enable --now nginx
-```
-
-That static-only option loses the member portal, admin dashboard, tracked Meetup links and reports. The User Data hub option keeps all of them.
+That static-only option loses the member portal, admin dashboard, tracked Meetup links and reports. It also means the Builder Card's optional hunt features that call the external Hunt Hub API in `config.json` will not be served by this instance. The card generator, QR code, profile display and all client-side visuals still work.
 
 ---
 
